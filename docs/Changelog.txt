@@ -1,0 +1,40 @@
+Changes since SVN 61
+
+Memory Viewer dialog added (Ported from DeSmuME)
+Improved MusicSelect.lua
+Reset button implemented
+Fix Game name not diplayed on window if loading a recent ROM
+Small GUI cleanups
+1.5 and .25x Window size options
+CScope display
+Fixed Video modes
+Add color choice to menu
+Fixed DirectDraw bugs
+Added option to select separation width for Side By Side mode. If 96 is used, the video should be able to be recorded in a mode compatible with YouTube's HD mode for 3D videos.
+Improved 4/3 aspect ratio support
+
+
+Ram Search:
+Fix reset button
+Fix change counts counting
+Support for multiple selection
+
+Ram Watch:
+Add Seperator button
+Support for multiple selection
+SaveFile dialog - generate default filename based on rom
+
+
+TODO:
+
+Fix loading a recent ROM not stopping movies first
+Fix so Lag counter resets when loading a ROM
+Restart Movie menu option
+Fix bug where Ram Watch would not update unless Ram Search was open
+
+Lua:
+emu.frameadvance() implemented
+
+Fix Recentroms menu was not properly initializing the sound driver, which caused the game to go auto-turbo. Fixed. 
+
+Frame count resets when loading a new rom
