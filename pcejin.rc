@@ -258,7 +258,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,113,108,50,14,WS_GROUP
     LTEXT           "For more information visit:",IDC_STATIC,14,76,85,8
     LTEXT           "VBjin-OVR",IDC_STATIC,14,10,57,8
-    LTEXT           "VBjin originally written by Paul_t",IDC_STATIC,14,44,103,8
+    LTEXT           "VBjin originally written by Paul_t",IDC_STATIC,14,44,142,8
     LTEXT           "OculusVR support added by Jay Mattis",IDC_STATIC,14,20,124,8
 END
 
