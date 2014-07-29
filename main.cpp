@@ -132,7 +132,7 @@ int WINAPI WinMain( HINSTANCE hInstance,
 
 	GetINIPath();
 
-	OpenConsoleWindow = GetPrivateProfileBool("Display", "OpenConsoleWindow", true, IniName);
+	OpenConsoleWindow = GetPrivateProfileBool("Display", "OpenConsoleWindow", false, IniName);
 
 	if (OpenConsoleWindow)
 		OpenConsole();
@@ -154,6 +154,10 @@ int WINAPI WinMain( HINSTANCE hInstance,
 	ScaleScreen((float)pcejin.windowSize);
 
 	soundInit();
+
+#if USE_D3D
+	OculusInit();
+#endif // #if USE_D3D
 
 	LoadIniSettings();
 	InitSpeedThrottle();

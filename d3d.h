@@ -6,6 +6,8 @@
 bool D3DInit();
 void render();
 void SetupOculus( bool warnIfNotFound );
+void OculusInit();
+void DismissHSWDisplay();
 
 #endif // #if USE_D3D
 

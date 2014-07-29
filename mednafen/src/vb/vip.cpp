@@ -236,9 +236,6 @@ static void Recalc3DModeStuff(bool non_rgb_output = false)
            break;
 
   case VB3DMODE_OVR:
-#if USE_D3D
-		   SetupOculus( true );
-#endif // #if USE_D3D
 	       CopyFBColumnToTarget = CopyFBColumnToTarget_OVR;
 	       break;
  }

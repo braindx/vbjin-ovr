@@ -13,6 +13,7 @@
 #include "pcejin.h"
 #include "mednafen.h"
 #include "dd.h"
+#include "d3d.h"
 
 #include <string>
 
@@ -2230,6 +2231,10 @@ int HandleKeyUp(WPARAM wParam, LPARAM lParam, int modifiers)
 
 int HandleKeyMessage(WPARAM wParam, LPARAM lParam, int modifiers)
 {
+	if ( wParam > 0x06 )
+	{
+		DismissHSWDisplay();
+	}
 
 	// update toggles
 	for (int J = 0; J < 5; J++)

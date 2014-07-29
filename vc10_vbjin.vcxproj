@@ -68,7 +68,7 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;oculus\LibOVR\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;WANT_PCE_EMU;NEED_CDEMU;EXTERNAL_LIBCDIO_CONFIG_H;NO_CODECS;HAVE_DIRECTSOUND;USE_D3D=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -79,7 +79,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d10.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d10.lib;d3d11.lib;dxgi.lib;vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;ws2_32.lib;dxguid.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>zlib;agg;lua;$(DXSDK_DIR)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -103,7 +103,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;oculus\LibOVR\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;WANT_PCE_EMU;NEED_CDEMU;EXTERNAL_LIBCDIO_CONFIG_H;NO_CODECS;HAVE_DIRECTSOUND;USE_D3D;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -116,7 +116,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d10.lib;d3dcompiler.lib;dxgi.lib;vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d10.lib;d3dcompiler.lib;dxgi.lib;vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;ws2_32.lib;dxguid.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>zlib;agg;lua;$(DXSDK_DIR)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -128,6 +128,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>
@@ -144,7 +145,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;oculus\LibOVR\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;WANT_PCE_EMU;NEED_CDEMU;EXTERNAL_LIBCDIO_CONFIG_H;NO_CODECS;HAVE_DIRECTSOUND;USE_D3D;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -156,7 +157,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d10.lib;d3dcompiler.lib;dxgi.lib;vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d10.lib;d3dcompiler.lib;dxgi.lib;vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;ws2_32.lib;dxguid.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>zlib;agg;lua;$(DXSDK_DIR)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -167,6 +168,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>
@@ -202,8 +204,7 @@
     <ClCompile Include="memView.cpp" />
     <ClCompile Include="mednafen\src\compress\minilzo.c" />
     <ClCompile Include="movie.cpp" />
-    <ClCompile Include="oculus\OculusRoomTiny\RenderTiny_D3D1X_Device.cpp" />
-    <ClCompile Include="oculus\OculusRoomTiny\RenderTiny_Device.cpp" />
+    <ClCompile Include="oculus\RenderTiny_D3D11_Device.cpp" />
     <ClCompile Include="ParseCmdLine.cpp" />
     <ClCompile Include="mednafen\src\video\png.cpp" />
     <ClCompile Include="mednafen\src\compress\quicklz.cpp" />
@@ -289,6 +290,7 @@
     <ClInclude Include="mednafen\include\trio\triostr.h" />
     <ClInclude Include="memView.h" />
     <ClInclude Include="movie.h" />
+    <ClInclude Include="oculus\RenderTiny_D3D11_Device.h" />
     <ClInclude Include="ParseCmdLine.h" />
     <ClInclude Include="pcejin.h" />
     <ClInclude Include="prefix.h" />

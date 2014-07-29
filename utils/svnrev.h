@@ -1,1 +1,1 @@
-#define SVN_REV_STR "1.0"
+#define SVN_REV_STR "2.0"

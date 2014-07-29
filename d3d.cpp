@@ -1,9 +1,15 @@
 #if USE_D3D
 
-#ifdef _DEBUG
+/*#ifdef _DEBUG
 #pragma comment( lib, "oculus/LibOVR/Lib/Win32/libovrd.lib" )
 #else
 #pragma comment( lib, "oculus/LibOVR/Lib/Win32/libovr.lib" )
+#endif*/
+
+#ifdef _DEBUG
+#pragma comment( lib, "oculus/LibOVR/Lib/Win32/VS2013/libovrd.lib" )
+#else
+#pragma comment( lib, "oculus/LibOVR/Lib/Win32/VS2013/libovr.lib" )
 #endif
 
 #include "aggdraw.h"
@@ -13,26 +19,20 @@
 #include "mednafen/src/mednafen.h"
 #include "pcejin.h"
 #include "vb.h"
-#include "oculus/OculusRoomTiny/RenderTiny_D3D1X_Device.h"
-#include "oculus/OculusRoomTiny/RenderTiny_Device.h"
-#include "oculus/LibOVR/Src/OVR_SensorFusion.h"
-#include "oculus/LibOVR/Src/Kernel/OVR_System.h"
 
-using namespace OVR;
-using namespace RenderTiny;
-
-RendererParams		RenderParams;
-StereoConfig        SConfig;
-Ptr<DeviceManager>	pManager = NULL;
-Ptr<SensorDevice>   pSensor;
-Ptr<HMDDevice>      pHMD;
-SensorFusion        SFusion;
-OVR::HMDInfo        hmdInfo;
-Ptr<RenderDevice>   pRender;
-int					Width = 1280, Height = 800;
-RenderTiny::Scene   scene;
-Matrix4f            View;
-Texture*			ScreenTexture;
+#include "OVR_CAPI.h"
+#include "oculus/RenderTiny_D3D11_Device.h"
+#define OVR_D3D_VERSION 11
+#include "OVR_CAPI_D3D.h"
+ovrHmd             HMD;
+ovrEyeRenderDesc   EyeRenderDesc[2];
+ovrD3D11Texture    EyeTexture[2];
+RenderDevice*      pRender = 0;
+Texture*           pRenderTargetTexture = 0;
+Texture*		   vbEyeTexture = 0;
+ShaderFill*		   vbShaderFill = 0;
+ovrRecti           EyeRenderViewport[2];
+Buffer*			   QuadVertexBuffer;
 
 static void __forceinline convert32( int eye ){
 	uint8 *pb_ptr = (uint8*)convert_buffer;
@@ -62,165 +62,125 @@ static void __forceinline convert32( int eye ){
 
 void OculusInit()
 {
-	// *** Oculus HMD & Sensor Initialization
-
-	// Create DeviceManager and first available HMDDevice from it.
-	// Sensor object is created from the HMD, to ensure that it is on the
-	// correct device.
-
-	OVR::System::Init(OVR::Log::ConfigureDefaultLog(OVR::LogMask_All));
-	pManager = *DeviceManager::Create();	
+	ovr_Initialize();
 }
 
 void SetupOculus( bool warnIfNotFound )
 {
-	if ( pManager == NULL )
+	HMD = ovrHmd_Create( 0 );
+
+	if ( warnIfNotFound )
 	{
-		return;
-	}
-
-	int         detectionResult = IDCONTINUE;
-	const char* detectionMessage;
-
-	do 
-	{
-		// Release Sensor/HMD in case this is a retry.
-		pSensor.Clear();
-		pHMD.Clear();
-		RenderParams.MonitorName.Clear();
-
-		if ( pManager )
+		if ( !HMD )
 		{
-			pHMD  = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();
-			if (pHMD)
-			{
-				pSensor = *pHMD->GetSensor();
-
-				// This will initialize HMDInfo with information about configured IPD,
-				// screen size and other variables needed for correct projection.
-				// We pass HMD DisplayDeviceName into the renderer to select the
-				// correct monitor in full-screen mode.
-				if (pHMD->GetDeviceInfo(&hmdInfo))
-				{            
-					RenderParams.MonitorName = hmdInfo.DisplayDeviceName;
-					RenderParams.DisplayId = hmdInfo.DisplayId;
-					SConfig.SetHMDInfo(hmdInfo);
-				}
-			}
-			else
-			{            
-				// If we didn't detect an HMD, try to create the sensor directly.
-				// This is useful for debugging sensor interaction; it is not needed in
-				// a shipping app.
-				pSensor = *pManager->EnumerateDevices<SensorDevice>().CreateDevice();
-			}
+			MessageBoxA( NULL, "Oculus Rift not detected.", "", MB_OK );
+			return;
 		}
-
-
-		// If there was a problem detecting the Rift, display appropriate message.
-		detectionResult  = IDCANCEL;
-
-		if (!pHMD && !pSensor)
-			detectionMessage = "Oculus Rift not detected.";
-		else if (!pHMD)
-			detectionMessage = "Oculus Sensor detected; HMD Display not detected.";
-		else if (!pSensor)
-			detectionMessage = "Oculus HMD Display detected; Sensor not detected.";
-		else if (hmdInfo.DisplayDeviceName[0] == '\0')
-			detectionMessage = "Oculus Sensor detected; HMD display EDID not detected.";
-		else
-			detectionMessage = 0;
-
-		if (detectionMessage && warnIfNotFound)
+		if ( HMD->ProductName[0] == '\0' )
 		{
-			String messageText(detectionMessage);
-			messageText += "\n\n"
-				"Press 'Try Again' to run retry detection.\n"
-				"Press 'Continue' to run full-screen anyway.";
-
-			detectionResult = ::MessageBoxA(0, messageText.ToCStr(), "Oculus Rift Detection",
-				MB_RETRYCANCEL|MB_ICONWARNING);
+			MessageBoxA( NULL, "Rift detected, display not enabled.", "", MB_OK );
+			return;
 		}
-
-	} while (detectionResult != IDCANCEL);
-
-
-	if (hmdInfo.HResolution > 0)
-	{
-		Width  = hmdInfo.HResolution;
-		Height = hmdInfo.VResolution;
-	}
-
-	SConfig.SetFullViewport(Viewport(0, 0, Width, Height));
-	SConfig.SetStereoMode(Stereo_LeftRight_Multipass);
-
-	if (hmdInfo.HScreenSize > 0.0f)
-	{
-		if (hmdInfo.HScreenSize > 0.140f)  // 7"
-			SConfig.SetDistortionFitPointVP(-1.0f, 0.0f);        
-		else        
-			SConfig.SetDistortionFitPointVP(0.0f, 1.0f);        
 	}
 }
 
 bool D3DInit()
 {
-	OculusInit();
 	SetupOculus( MDFN_IEN_VB::GetSplitMode() == MDFN_IEN_VB::VB3DMODE_OVR );
+	bool UseAppWindowFrame = ( HMD->HmdCaps & ovrHmdCap_ExtendDesktop ) ? false : true;
+	RendererParams rendererParams;
+	rendererParams.Resolution = HMD->Resolution;
+	rendererParams.Multisample = 1;
+	rendererParams.Fullscreen = true;
+	pRender = RenderDevice::CreateDevice( rendererParams, (void*)g_hWnd );
+	ovrHmd_AttachToWindow( HMD, g_hWnd, NULL, NULL );
 
-	pRender = *RenderTiny::D3D10::RenderDevice::CreateDevice(RenderParams, (void*)g_hWnd);
-	if (!pRender)
+	vbEyeTexture = pRender->CreateTexture( Texture_RGBA | 1, pcejin.width, pcejin.height, NULL );
+	vbShaderFill = pRender->CreateTextureFill( vbEyeTexture );
+
+	Sizei recommenedTex0Size = ovrHmd_GetFovTextureSize( HMD, ovrEye_Left, HMD->DefaultEyeFov[0], 1.0f );
+	Sizei recommenedTex1Size = ovrHmd_GetFovTextureSize( HMD, ovrEye_Right, HMD->DefaultEyeFov[1], 1.0f );
+	Sizei RenderTargetSize;
+	RenderTargetSize.w = recommenedTex0Size.w + recommenedTex1Size.w;
+	RenderTargetSize.h = max( recommenedTex0Size.h, recommenedTex1Size.h );
+	pRenderTargetTexture = pRender->CreateTexture( Texture_RGBA | Texture_RenderTarget |
+		1,
+		RenderTargetSize.w, RenderTargetSize.h, NULL );
+	RenderTargetSize.w = pRenderTargetTexture->GetWidth();
+	RenderTargetSize.h = pRenderTargetTexture->GetHeight();
+
+	ovrFovPort eyeFov[2] = { HMD->DefaultEyeFov[0], HMD->DefaultEyeFov[1] };
+	EyeRenderViewport[0].Pos = Vector2i( 0, 0 );
+	EyeRenderViewport[0].Size = Sizei( RenderTargetSize.w / 2, RenderTargetSize.h );
+	EyeRenderViewport[1].Pos = Vector2i( ( RenderTargetSize.w + 1 ) / 2, 0 );
+	EyeRenderViewport[1].Size = EyeRenderViewport[0].Size;
+
+	EyeTexture[0].D3D11.Header.API = ovrRenderAPI_D3D11;
+	EyeTexture[0].D3D11.Header.TextureSize = RenderTargetSize;
+	EyeTexture[0].D3D11.Header.RenderViewport = EyeRenderViewport[0];
+	EyeTexture[0].D3D11.pTexture = pRenderTargetTexture->Tex.GetPtr();
+	EyeTexture[0].D3D11.pSRView = pRenderTargetTexture->TexSv.GetPtr();	
+
+	// Right eye uses the same texture, but different rendering viewport.
+	EyeTexture[1] = EyeTexture[0];
+	EyeTexture[1].D3D11.Header.RenderViewport = EyeRenderViewport[1];
+
+	ovrD3D11Config d3d11cfg;
+	d3d11cfg.D3D11.Header.API = ovrRenderAPI_D3D11;
+	d3d11cfg.D3D11.Header.RTSize = Sizei( HMD->Resolution.w, HMD->Resolution.h );
+	d3d11cfg.D3D11.Header.Multisample = 1;
+	d3d11cfg.D3D11.pDevice = pRender->Device;
+	d3d11cfg.D3D11.pDeviceContext = pRender->Context;
+	d3d11cfg.D3D11.pBackBufferRT = pRender->BackBufferRT;
+	d3d11cfg.D3D11.pSwapChain = pRender->SwapChain;	
+
+	ovrHmd_SetEnabledCaps( HMD, ovrHmdCap_LowPersistence | ovrHmdCap_DynamicPrediction );
+
+	if ( !ovrHmd_ConfigureRendering( HMD, &d3d11cfg.Config,
+		ovrDistortionCap_Chromatic | ovrDistortionCap_Vignette |
+		/*ovrDistortionCap_TimeWarp |*/ ovrDistortionCap_Overdrive,
+		eyeFov, EyeRenderDesc ) )
 	{
+		MessageBoxA( NULL, "ovrHmd_ConfigureRendering failed", "", MB_OK );
 		return false;
-	}	
+	}
 
-	pRender->SetSceneRenderScale(SConfig.GetDistortionScale());
-	SConfig.Set2DAreaFov(DegreeToRad(105.0f));
+	ovrHmd_ConfigureTracking( HMD, ovrTrackingCap_Orientation |
+		ovrTrackingCap_MagYawCorrection |
+		ovrTrackingCap_Position, 0 );
 
-	ScreenTexture = pRender->CreateTexture( Texture_RGBA, pcejin.width, pcejin.height, NULL );
+	QuadVertexBuffer = pRender->CreateBuffer();
+	const Vertex QuadVertices[] =
+	{ Vertex( Vector3f( -0.5, 0.5, 0 ), Color( 255, 255, 255, 255 ), 0.0f, 0.0f ), Vertex( Vector3f( 0.5, 0.5, 0 ), Color( 255, 255, 255, 255 ), 1.0f, 0.0f ),
+	Vertex( Vector3f( -0.5, -0.5, 0 ), Color( 255, 255, 255, 255 ), 0.0f, 1.0f ), Vertex( Vector3f( 0.5, -0.5, 0 ), Color( 255, 255, 255, 255 ), 1.0f, 1.0f ) };
+	QuadVertexBuffer->Data( Buffer_Vertex, QuadVertices, sizeof( QuadVertices ) );
 
 	return true;
 }
 
-void render( const StereoEyeParams &stereo )
+static void UpdateTexture( ovrEyeType eye )
 {
-	convert32( stereo.Eye == StereoEye_Left ? 1 : 0 );
+	pRender->Context->UpdateSubresource( vbEyeTexture->Tex, 0, NULL, convert_buffer, vbEyeTexture->Width * 4, vbEyeTexture->Width * vbEyeTexture->Height * 4 );
+}
 
-	CallRegisteredLuaFunctions(LUACALL_AFTEREMULATIONGUI);
+void render( ovrEyeType eye )
+{
+	convert32( eye == ovrEye_Left ? 1 : 0 );
+
+	CallRegisteredLuaFunctions( LUACALL_AFTEREMULATIONGUI );
 
 	osd->update();
 	DrawHUD();
 	osd->clear();
 
-	aggDraw.hud->attach(convert_buffer, pcejin.width, pcejin.height, 4*pcejin.width);
-
-	pRender->UpdateTexture( ScreenTexture, convert_buffer );
-
-	PostProcessType postProcess = MDFN_IEN_VB::GetSplitMode() == MDFN_IEN_VB::VB3DMODE_OVR ? PostProcess_Distortion : PostProcess_None;
-	pRender->BeginScene(postProcess);
-
-	// Apply Viewport/Projection for the eye.
-	pRender->ApplyStereoParams2D(stereo);
-	pRender->Clear();
-	pRender->SetDepthMode(false, false);
-
-	if ( MDFN_IEN_VB::GetSplitMode() == MDFN_IEN_VB::VB3DMODE_OVR )
-	{
-		float width = 1.0f;
-		float height = pcejin.height * width / pcejin.width;
-		pRender->FillTexture( -width / 2.0f, -height / 2.0f, width / 2.0f, height / 2.0f, ScreenTexture );
-	}
-	else
-	{
-		pRender->SetProjection( Matrix4f::Ortho2D( 1.0f, 1.0f ) );
-		pRender->FillTexture( 0.0f, 0.0f, 1.0f, 1.0f, ScreenTexture );
-	}
-
-	pRender->FinishScene();
+	aggDraw.hud->attach( convert_buffer, pcejin.width, pcejin.height, 4 * pcejin.width );
+	UpdateTexture( eye );
 }
 
 void render()
 {
+	ovrPosef eyeRenderPose[2];
+
 	if( !pcejin.romLoaded || espec.skip )
 	{
 		return;
@@ -230,8 +190,6 @@ void render()
 	{
 		pcejin.width = espec.DisplayRect.w;
 		pcejin.height = espec.DisplayRect.h;
-		ScreenTexture->Release();
-		ScreenTexture = pRender->CreateTexture( Texture_RGBA, pcejin.width, pcejin.height, NULL );
 		if( !pcejin.maximized )
 		{
 			ScaleScreen( (float)pcejin.windowSize );
@@ -242,26 +200,49 @@ void render()
 
 	if ( MDFN_IEN_VB::GetSplitMode() == MDFN_IEN_VB::VB3DMODE_OVR )
 	{
-		SConfig.SetStereoMode(Stereo_LeftRight_Multipass);
+		ovrHmd_BeginFrame( HMD, 0 );
+		pRender->BeginScene();
+		ovrHmd_GetTrackingState( HMD, 0 );
+		for ( int eyeIndex = 0; eyeIndex < ovrEye_Count; eyeIndex++ )
+		{
+			ovrEyeType eye = HMD->EyeRenderOrder[eyeIndex];
+			render( eye );
+			pRender->SetRenderTarget( pRenderTargetTexture );
+			pRender->SetViewport( Recti( EyeRenderViewport[eye] ) );
+			pRender->Clear();
+			pRender->SetProjection( Matrix4f() );
+			pRender->SetDepthMode( false, false );
+			float aspectRatio = (float)pcejin.width / pcejin.height / ( (float)EyeRenderViewport[eye].Size.w / EyeRenderViewport[eye].Size.h );
+			Matrix4f view = Matrix4f( 1, 0, 0, 0,
+				0, 1 / aspectRatio, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1 );
+			pRender->Render( vbShaderFill, QuadVertexBuffer, NULL, sizeof( Vertex ), view, 0, 4, Prim_TriangleStrip );
+		}
+		pRender->FinishScene();		
+		ovrHmd_EndFrame( HMD, eyeRenderPose, &EyeTexture[0].Texture );
 	}
 	else
 	{
-		SConfig.SetStereoMode(Stereo_None);
+		render( ovrEye_Right );
+		pRender->SetDefaultRenderTarget();
+		pRender->SetFullViewport();
+		pRender->Clear();
+		pRender->SetProjection( Matrix4f() );
+		pRender->SetDepthMode( false, false );
+		float aspectRatio = (float)pcejin.width / pcejin.height / ( (float)pRender->D3DViewport.Width / pRender->D3DViewport.Height );
+		Matrix4f view = Matrix4f( 2, 0, 0, 0,
+			0, 2 / aspectRatio, 0, 0,
+			0, 0, 2, 0,
+			0, 0, 0, 1 );
+		pRender->Render( vbShaderFill, QuadVertexBuffer, NULL, sizeof( Vertex ), view, 0, 4, Prim_TriangleStrip );
+		pRender->Present( true );
 	}
+}
 
-	switch(SConfig.GetStereoMode())
-	{
-	case Stereo_None:
-	render(SConfig.GetEyeRenderParams(StereoEye_Center));
-	break;
-
-	case Stereo_LeftRight_Multipass:
-	render(SConfig.GetEyeRenderParams(StereoEye_Left));
-	render(SConfig.GetEyeRenderParams(StereoEye_Right));
-	break;
-	}	
-
-	pRender->Present();
+void DismissHSWDisplay()
+{
+	ovrHmd_DismissHSWDisplay( HMD );
 }
 
 #endif // #if USE_D3D
