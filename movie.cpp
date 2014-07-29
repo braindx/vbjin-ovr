@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <assert.h>
 #include <limits.h>
 #include <fstream>
