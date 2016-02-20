@@ -1,0 +1,526 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="aggdraw.cpp" />
+    <ClCompile Include="aviout.cpp" />
+    <ClCompile Include="d3d.cpp" />
+    <ClCompile Include="mednafen\src\sound\Blip_Buffer.cpp" />
+    <ClCompile Include="mednafen\src\compress\blz.c" />
+    <ClCompile Include="CWindow.cpp" />
+    <ClCompile Include="dd.cpp" />
+    <ClCompile Include="dxsound.cpp" />
+    <ClCompile Include="mednafen\src\endian.cpp" />
+    <ClCompile Include="mednafen\src\error.cpp" />
+    <ClCompile Include="mednafen\src\file.cpp" />
+    <ClCompile Include="mednafen\src\sound\Fir_Resampler.cpp" />
+    <ClCompile Include="mednafen\src\general.cpp" />
+    <ClCompile Include="GPU_osd.cpp" />
+    <ClCompile Include="hotkey.cpp" />
+    <ClCompile Include="mednafen\src\vb\input.cpp" />
+    <ClCompile Include="mednafen\src\compress\ioapi.c" />
+    <ClCompile Include="lua-engine.cpp" />
+    <ClCompile Include="luaconsole.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mednafen\src\math_ops.cpp" />
+    <ClCompile Include="mednafen\src\md5.cpp" />
+    <ClCompile Include="mednafen\src\mednafen.cpp" />
+    <ClCompile Include="mednafen\src\memory.cpp" />
+    <ClCompile Include="mednafen\src\mempatcher.cpp" />
+    <ClCompile Include="memView.cpp" />
+    <ClCompile Include="mednafen\src\compress\minilzo.c" />
+    <ClCompile Include="movie.cpp" />
+    <ClCompile Include="ParseCmdLine.cpp" />
+    <ClCompile Include="mednafen\src\video\png.cpp" />
+    <ClCompile Include="mednafen\src\compress\quicklz.cpp" />
+    <ClCompile Include="ramsearch.cpp" />
+    <ClCompile Include="ramwatch.cpp" />
+    <ClCompile Include="utils\readwrite.cpp" />
+    <ClCompile Include="recentroms.cpp" />
+    <ClCompile Include="replay.cpp" />
+    <ClCompile Include="mednafen\src\settings.cpp" />
+    <ClCompile Include="mednafen\src\hw_cpu\v810\fpu-new\softfloat.c" />
+    <ClCompile Include="mednafen\src\sound\sound.cpp" />
+    <ClCompile Include="mednafen\src\state.cpp" />
+    <ClCompile Include="mednafen\src\sound\Stereo_Buffer.cpp" />
+    <ClCompile Include="throttle.cpp" />
+    <ClCompile Include="mednafen\src\vb\timer.cpp" />
+    <ClCompile Include="mednafen\src\hw_cpu\v810\fpu-new\timesoftfloat.c" />
+    <ClCompile Include="mednafen\src\trio\trio.c" />
+    <ClCompile Include="mednafen\src\trio\trionan.c" />
+    <ClCompile Include="mednafen\src\trio\triostr.c" />
+    <ClCompile Include="mednafen\src\compress\unzip.c" />
+    <ClCompile Include="mednafen\src\hw_cpu\v810\v810_cpu.cpp" />
+    <ClCompile Include="mednafen\src\vb\vb.cpp" />
+    <ClCompile Include="mednafen\src\video\video.cpp" />
+    <ClCompile Include="mednafen\src\vb\vip.cpp" />
+    <ClCompile Include="mednafen\src\vb\vsu.cpp" />
+    <ClCompile Include="utils\xstring.cpp" />
+    <ClCompile Include="waveout.cpp" />
+    <ClCompile Include="OculusSDK\LibOVR\Src\OVR_CAPIShim.c">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVR\Src\OVR_CAPI_Util.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVR\Src\OVR_StereoProjection.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Alg.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Allocator.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Atomic.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Callbacks.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_CRC32.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_DebugHelp.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_File.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_FileFILE.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_JSON.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Lockless.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Log.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_mach_exc_OSX.c">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Rand.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_RefCount.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_SharedMemory.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Std.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_String.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_String_FormatUtil.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_String_PathUtil.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_SysFile.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_System.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_ThreadCommandQueue.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_ThreadsPthread.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_ThreadsWinAPI.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Timer.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_UTF8Util.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_D3D11_Blitter.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_Direct3D.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_GetSystemSpecs.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_GL_Blitter.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_ImageWindow.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_LongPollThread.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_SystemGUI.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_SystemInfo.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_Watchdog.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\Samples\CommonSrc\Platform\Platform.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\Samples\CommonSrc\Render\Render_D3D11_Device.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\Samples\CommonSrc\Render\Render_Device.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\Samples\CommonSrc\Render\Render_GL_Device.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\Samples\CommonSrc\Render\Render_GL_Win32_Device.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\Samples\CommonSrc\Util\OptionMenu.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+    <ClCompile Include="OculusSDK\Samples\CommonSrc\Util\RenderProfiler.cpp">
+      <Filter>OVR</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="agg2d.h" />
+    <ClInclude Include="aggdraw.h" />
+    <ClInclude Include="aviout.h" />
+    <ClInclude Include="CWindow.h" />
+    <ClInclude Include="d3d.h" />
+    <ClInclude Include="dd.h" />
+    <ClInclude Include="dxsound.h" />
+    <ClInclude Include="GPU_osd.h" />
+    <ClInclude Include="hotkey.h" />
+    <ClInclude Include="inttypes.h" />
+    <ClInclude Include="lua-engine.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="mednafen\include\blargg_common.h" />
+    <ClInclude Include="mednafen\include\blargg_config.h" />
+    <ClInclude Include="mednafen\include\blargg_endian.h" />
+    <ClInclude Include="mednafen\include\blargg_source.h" />
+    <ClInclude Include="mednafen\include\blip\old\Blip_Buffer.h" />
+    <ClInclude Include="mednafen\include\blip\Blip_Buffer.h" />
+    <ClInclude Include="mednafen\src\compress\blz.h" />
+    <ClInclude Include="mednafen\src\vb\debug.h" />
+    <ClInclude Include="mednafen\src\endian.h" />
+    <ClInclude Include="mednafen\src\error.h" />
+    <ClInclude Include="mednafen\src\file.h" />
+    <ClInclude Include="mednafen\include\Fir_Resampler.h" />
+    <ClInclude Include="mednafen\src\general.h" />
+    <ClInclude Include="mednafen\src\git.h" />
+    <ClInclude Include="mednafen\src\vb\input.h" />
+    <ClInclude Include="mednafen\src\compress\ioapi.h" />
+    <ClInclude Include="mednafen\src\compress\lzoconf.h" />
+    <ClInclude Include="mednafen\src\compress\lzodefs.h" />
+    <ClInclude Include="mednafen\src\math_ops.h" />
+    <ClInclude Include="mednafen\src\md5.h" />
+    <ClInclude Include="mednafen\src\mednafen.h" />
+    <ClInclude Include="mednafen\src\memory.h" />
+    <ClInclude Include="mednafen\src\mempatcher.h" />
+    <ClInclude Include="mednafen\src\hw_cpu\v810\fpu-new\milieu.h" />
+    <ClInclude Include="mednafen\src\compress\minilzo.h" />
+    <ClInclude Include="mednafen\src\video\png.h" />
+    <ClInclude Include="mednafen\src\compress\quicklz.h" />
+    <ClInclude Include="mednafen\src\settings-common.h" />
+    <ClInclude Include="mednafen\src\settings-driver.h" />
+    <ClInclude Include="mednafen\src\settings.h" />
+    <ClInclude Include="mednafen\src\hw_cpu\v810\fpu-new\softfloat.h" />
+    <ClInclude Include="mednafen\src\sound.h" />
+    <ClInclude Include="mednafen\src\state-common.h" />
+    <ClInclude Include="mednafen\src\state-driver.h" />
+    <ClInclude Include="mednafen\src\state.h" />
+    <ClInclude Include="mednafen\include\blip\Stereo_Buffer.h" />
+    <ClInclude Include="mednafen\src\vb\timer.h" />
+    <ClInclude Include="mednafen\include\trio\trio.h" />
+    <ClInclude Include="mednafen\include\trio\triodef.h" />
+    <ClInclude Include="mednafen\include\trio\trionan.h" />
+    <ClInclude Include="mednafen\include\trio\triop.h" />
+    <ClInclude Include="mednafen\include\trio\triostr.h" />
+    <ClInclude Include="memView.h" />
+    <ClInclude Include="movie.h" />
+    <ClInclude Include="ParseCmdLine.h" />
+    <ClInclude Include="pcejin.h" />
+    <ClInclude Include="prefix.h" />
+    <ClInclude Include="ramsearch.h" />
+    <ClInclude Include="ramwatch.h" />
+    <ClInclude Include="recentroms.h" />
+    <ClInclude Include="replay.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="types.h" />
+    <ClInclude Include="mednafen\src\compress\unzip.h" />
+    <ClInclude Include="mednafen\src\hw_cpu\v810\v810_cpu.h" />
+    <ClInclude Include="mednafen\src\hw_cpu\v810\v810_cpuD.h" />
+    <ClInclude Include="mednafen\src\hw_cpu\v810\v810_do_am.h" />
+    <ClInclude Include="mednafen\src\hw_cpu\v810\v810_opt.h" />
+    <ClInclude Include="mednafen\src\vb\vb.h" />
+    <ClInclude Include="mednafen\src\video\video-common.h" />
+    <ClInclude Include="mednafen\src\video.h" />
+    <ClInclude Include="mednafen\src\vb\vip.h" />
+    <ClInclude Include="mednafen\src\vb\vsu.h" />
+    <ClInclude Include="unixstuff.h" />
+    <ClInclude Include="utils\readwrite.h" />
+    <ClInclude Include="utils\xstring.h" />
+    <ClInclude Include="waveout.h" />
+    <ClInclude Include="OculusSDK\LibOVR\Include\Extras\OVR_CAPI_Util.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\Extras\OVR_Math.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\Extras\OVR_StereoProjection.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\OVR.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\OVR_CAPI.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\OVR_CAPI_0_8_0.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\OVR_CAPI_Audio.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\OVR_CAPI_D3D.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\OVR_CAPI_GL.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\OVR_CAPI_Keys.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\OVR_ErrorCode.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\OVR_Kernel.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Include\OVR_Version.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Projects\Windows\VS2013\OVR_ForceRebuildNoCheckin.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVR\Src\Resources\Windows\resource.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE_GL.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Alg.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Allocator.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Array.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Atomic.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Callbacks.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_CallbacksInternal.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Color.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Compiler.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_ContainerAllocator.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_CRC32.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_DebugHelp.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Delegates.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Deque.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_File.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Hash.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_JSON.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_KeyCodes.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_List.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Lockless.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Log.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_mach_exc_OSX.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Nullptr.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Rand.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_RefCount.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_SharedMemory.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Std.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_String.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_StringHash.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_SysFile.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_System.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_ThreadCommandQueue.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Threads.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Timer.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Types.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_UTF8Util.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Win32_IncludeWindows.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Tracing\Tracing.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Shaders\Blt_ps.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Shaders\Blt_vs.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_D3D11_Blitter.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_Direct3D.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_GL_Blitter.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_ImageWindow.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_LongPollThread.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_SystemGUI.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_SystemInfo.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_Watchdog.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Platform\Gamepad.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Platform\Platform.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Platform\Platform_Default.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Render\Render_D3D11_Device.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Render\Render_Device.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Render\Render_Font.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Render\Render_FontEmbed_DejaVu48.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Render\Render_GL_Device.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Render\Render_GL_Win32_Device.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Util\OptionMenu.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusSDK\Samples\CommonSrc\Util\RenderProfiler.h">
+      <Filter>OVR</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="pcejin.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\VBjin.bmp" />
+    <None Include="Icons\VBjin.ico" />
+    <None Include="mednafen\src\compress\Makefile.am.inc" />
+    <None Include="Icons\pcejin1.bmp" />
+    <None Include="Icons\pcejin1.ico" />
+    <None Include="mednafen\src\hw_cpu\v810\v810_op_table.inc" />
+    <None Include="mednafen\src\hw_cpu\v810\v810_oploop.inc" />
+    <None Include="mednafen\src\vb\vip_draw.inc" />
+    <None Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_NewOverride.inl">
+      <Filter>OVR</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="OVR">
+      <UniqueIdentifier>{d13b4313-b978-429a-b4be-498f7023f300}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
