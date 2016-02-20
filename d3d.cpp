@@ -21,18 +21,20 @@
 #include "vb.h"
 
 #include "OVR_CAPI.h"
-#include "oculus/RenderTiny_D3D11_Device.h"
+#include "OculusSDK\Samples\CommonSrc\Render\Render_D3D11_Device.h"
 #define OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"
+using namespace OVR;
 ovrHmd             HMD;
 ovrEyeRenderDesc   EyeRenderDesc[2];
 ovrD3D11Texture    EyeTexture[2];
-RenderDevice*      pRender = 0;
-Texture*           pRenderTargetTexture = 0;
-Texture*		   vbEyeTexture = 0;
-ShaderFill*		   vbShaderFill = 0;
+
+Render::D3D11::RenderDevice*      pRender = 0;
+Render::Texture*           pRenderTargetTexture = 0;
+Render::Texture*		   vbEyeTexture = 0;
+Render::ShaderFill*		   vbShaderFill = 0;
 ovrRecti           EyeRenderViewport[2];
-Buffer*			   QuadVertexBuffer;
+Render::Buffer*			   QuadVertexBuffer;
 
 static void __forceinline convert32( int eye ){
 	uint8 *pb_ptr = (uint8*)convert_buffer;
