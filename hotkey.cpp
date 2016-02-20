@@ -2233,7 +2233,7 @@ int HandleKeyMessage(WPARAM wParam, LPARAM lParam, int modifiers)
 {
 	if ( wParam > 0x06 )
 	{
-		DismissHSWDisplay();
+//		DismissHSWDisplay();
 	}
 
 	// update toggles
