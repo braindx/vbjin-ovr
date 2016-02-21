@@ -21,7 +21,7 @@
 #include "vb.h"
 
 #include "OVR_CAPI.h"
-#include "OculusSDK\Samples\CommonSrc\Render\Render_D3D11_Device.h"
+#include "OculusSDK\Render\Render_D3D11_Device.h"
 #define OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"
 
