@@ -7,3 +7,5 @@ __bins/
 *.sdf 
 *.user
 Debug_vc10/
+Release_vc10/
+d3dcompiler_47.dll
