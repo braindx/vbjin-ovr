@@ -5,4 +5,5 @@ __bins/
 *.opensdf
 *.suo
 *.sdf 
+*.user
 Debug_vc10/
