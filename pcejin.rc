@@ -248,18 +248,22 @@ BEGIN
     CONTROL         "",1130,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,311,214
 END
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 170, 129
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 138
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    LTEXT           "version",IDC_TXT_VERSION,14,67,114,8,SS_NOPREFIX
-    LTEXT           "http://github.com/vbjin-ovr/",IDC_STATIC,14,85,114,8
-    DEFPUSHBUTTON   "OK",IDOK,113,108,50,14,WS_GROUP
-    LTEXT           "For more information visit:",IDC_STATIC,14,76,85,8
-    LTEXT           "VBjin-OVR",IDC_STATIC,14,10,57,8
-    LTEXT           "VBjin originally written by Paul_t",IDC_STATIC,14,44,142,8
-    LTEXT           "OculusVR support added by Jay Mattis",IDC_STATIC,14,20,124,8
+    LTEXT           "http://github.com/vbjin-ovr/",IDC_STATIC,15,112,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,117,50,14,WS_GROUP
+    LTEXT           "For more information visit:",IDC_STATIC,15,101,85,8
+    LTEXT           "VBjin-OVR Version 2.1",IDC_STATIC,14,10,137,8
+    LTEXT           "VBjin originally written by Paul_t",IDC_STATIC,15,90,142,8
+    LTEXT           "OculusVR support added by Jay Mattis",IDC_STATIC,14,20,136,8
+    LTEXT           "Maintain By Wayne Dimart wjweini@gmail.com",IDC_STATIC,14,31,140,8
+    GROUPBOX        "V2.1 Changes:",IDC_STATIC,15,50,142,38
+    LTEXT           "- Update Oculus SDK to 0.8.0.0 ",IDC_STATIC,21,63,130,10
+    LTEXT           "- Fix crash when Oculus not available.",IDC_STATIC,21,71,130,10
+    LTEXT           "wjweini@gmail.com",IDC_STATIC,89,40,67,8
 END
 
 IDD_BIOS DIALOG 0, 0, 241, 111
@@ -526,14 +530,34 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 163
         TOPMARGIN, 7
-        BOTTOMMARGIN, 122
+        BOTTOMMARGIN, 131
     END
 
     IDD_BIOS, DIALOG
     BEGIN
     END
 
+    IDD_INPUTCONFIG, DIALOG
+    BEGIN
+    END
+
     IDD_KEYCUSTOM, DIALOG
+    BEGIN
+    END
+
+    IDD_RAMSEARCH, DIALOG
+    BEGIN
+    END
+
+    IDD_RAMWATCH, DIALOG
+    BEGIN
+    END
+
+    IDD_EDITWATCH, DIALOG
+    BEGIN
+    END
+
+    IDD_LUA, DIALOG
     BEGIN
     END
 

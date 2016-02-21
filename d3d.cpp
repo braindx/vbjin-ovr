@@ -142,7 +142,7 @@ bool D3DInit()
 
 	}
 	 
-	RenderTargetSize.w = pRenderTargetTexture[0]->GetWidth();
+	RenderTargetSize.w = pRenderTargetTexture[0]->GetWidth(); 
 	RenderTargetSize.h = pRenderTargetTexture[0]->GetHeight();
 
 	ovrFovPort eyeFov[2] = { HmdDesc.DefaultEyeFov[0], HmdDesc.DefaultEyeFov[1] };
