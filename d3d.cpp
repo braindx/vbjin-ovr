@@ -19,6 +19,7 @@
 #include "mednafen/src/mednafen.h"
 #include "pcejin.h"
 #include "vb.h"
+#include "dd.h"
 
 #include "OVR_CAPI.h"
 #include "OculusSDK\Render\Render_D3D11_Device.h"
@@ -77,9 +78,7 @@ void OculusInit()
 	if (!OVR_SUCCESS(error))
 	{ 
 		char c[256] = { 0 };
-		sprintf(c, "ovr_Initialize Failed. error code:%d", error);
-		MessageBoxA(NULL, c, "", MB_OK); 
-		exit(0);
+		sprintf(c, "ovr_Initialize Failed. error code:%d", error); 
 		return;
 	}
 	else
@@ -95,12 +94,12 @@ void SetupOculus( bool warnIfNotFound )
 	ovrResult res =  ovr_Create(&HMD, &pLuid); 
 		if (!OVR_SUCCESS(res))
 		{
-			MessageBoxA( NULL, "Oculus Rift not detected. Exiting.", "", MB_OK );
-			exit(0);
+			MessageBoxA( NULL, "Oculus Rift not detected.", "", MB_OK ); 
 			return;
 		}  
 		else
 		{ 
+			isOculusExists = true;
 			printf("ovr_Create success.\n");
 		}
 }
@@ -108,6 +107,7 @@ void SetupOculus( bool warnIfNotFound )
 bool D3DInit()
 {
 	SetupOculus( MDFN_IEN_VB::GetSplitMode() == MDFN_IEN_VB::VB3DMODE_OVR );
+	if (isOculusExists == false) return false;
 	HmdDesc = ovr_GetHmdDesc(HMD); 
 	Render::RendererParams rendererParams;
 	rendererParams.Resolution = HmdDesc.Resolution;
@@ -193,6 +193,11 @@ void render( ovrEyeType eye )
 
 void render()
 {
+	if (isOculusExists == false)
+	{
+		renderDD();
+		return;
+	}
 	ovrPosef eyeRenderPose[2];
 
 	if( !pcejin.romLoaded || espec.skip )

@@ -24,6 +24,6 @@ extern LPDIRECTDRAW7			lpdd7;
 
 void ClearDirectDrawOutput();
 int CreateDDrawBuffers();
-void render();
+void renderDD();
 
 #endif // #if USE_DDRAW
