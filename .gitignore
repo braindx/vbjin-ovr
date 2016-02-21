@@ -5,3 +5,5 @@ __bins/
 *.opensdf
 *.suo
 *.sdf
+*.idb
+*.pdb

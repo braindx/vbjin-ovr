@@ -2224,6 +2224,7 @@ void RenderDevice::SetRenderTarget(Render::Texture* color, Render::Texture* dept
     memset(MaxTextureSet, 0, sizeof(MaxTextureSet));
 
     CurDepthBuffer = (Texture*)depth;
+	
     Context->OMSetRenderTargets(1, &((Texture*)color)->GetRtv().GetRawRef(), ((Texture*)depth)->GetDsv());
 }
 
