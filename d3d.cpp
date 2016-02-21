@@ -31,8 +31,10 @@ ovrHmd             HMD;
 ovrHmdDesc			HmdDesc;
 ovrGraphicsLuid  pLuid;
 ovrEyeRenderDesc   EyeRenderDesc[2];
+bool isOculusExists = false;
 //ovrD3D11Texture    EyeTexture[2];
 
+Recti fullViewport;// (0, 0, WindowWidth, WindowHeight);
 ovrTexture     * mirrorTexture = nullptr;
 Render::D3D11::RenderDevice*      pRender = 0;
 Render::D3D11::Texture*           pRenderTargetTexture[2] = { 0 };
@@ -77,6 +79,7 @@ void OculusInit()
 		char c[256] = { 0 };
 		sprintf(c, "ovr_Initialize Failed. error code:%d", error);
 		MessageBoxA(NULL, c, "", MB_OK); 
+		exit(0);
 		return;
 	}
 	else
@@ -92,12 +95,12 @@ void SetupOculus( bool warnIfNotFound )
 	ovrResult res =  ovr_Create(&HMD, &pLuid); 
 		if (!OVR_SUCCESS(res))
 		{
-			MessageBoxA( NULL, "Oculus Rift not detected.", "", MB_OK );
+			MessageBoxA( NULL, "Oculus Rift not detected. Exiting.", "", MB_OK );
+			exit(0);
 			return;
 		}  
 		else
-		{
-
+		{ 
 			printf("ovr_Create success.\n");
 		}
 }
@@ -108,6 +111,9 @@ bool D3DInit()
 	HmdDesc = ovr_GetHmdDesc(HMD); 
 	Render::RendererParams rendererParams;
 	rendererParams.Resolution = HmdDesc.Resolution;
+	Recti  fvp(0, 0, rendererParams.Resolution.w, rendererParams.Resolution.h);
+	fullViewport = fvp;
+
 	pRender = (Render::D3D11::RenderDevice*)pRender->CreateDevice(HMD, rendererParams, (void*)g_hWnd, pLuid);
 	if (!pRender) 
 		MessageBoxA(NULL, "Render::D3D11::RenderDevice Init Failed.", "", MB_OK); 
@@ -158,6 +164,10 @@ bool D3DInit()
 	Render::Vertex(Vector3f(-0.5, -0.5, 0), Color(255, 255, 255, 255), 0.0f, 1.0f), Render::Vertex(Vector3f(0.5, -0.5, 0), Color(255, 255, 255, 255), 1.0f, 1.0f) };
 	QuadVertexBuffer->Data(Render::Buffer_Vertex, QuadVertices, sizeof(QuadVertices));
 	 
+
+
+
+
 
 	return true;
 }
@@ -249,10 +259,17 @@ void render()
 	{
 		render( ovrEye_Right );
 		pRender->SetDefaultRenderTarget(); 
-		pRender->Clear();
-		pRender->SetProjection( Matrix4f() );
+
+		RECT rc;
+		GetClientRect(g_hWnd, &rc);
+		int WindowWidth = rc.right - rc.left;
+		int WindowHeight = rc.bottom - rc.top; 
+		pRender->SetViewport(fullViewport);
+
+		pRender->Clear(0,0.5,0.5,1);
+		pRender->SetProjection(Matrix4f()); 
 		pRender->SetDepthMode( false, false );
-		float aspectRatio = (float)pcejin.width / pcejin.height / ( (float)pRender->D3DViewport.Width / pRender->D3DViewport.Height );
+		float aspectRatio =  (float)pcejin.width / pcejin.height / ((float)pRender->D3DViewport.Width / pRender->D3DViewport.Height);
 		Matrix4f view = Matrix4f( 
 			2, 0, 0, 0,
 			0, 2 / aspectRatio, 0, 0,

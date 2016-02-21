@@ -107,7 +107,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;oculus\LibOVR\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\vbjin-ovr\OculusSDK\LibOVRKernel\Src;blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;G:\vbjin-ovr\OculusSDK\LibOVR\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;WANT_PCE_EMU;NEED_CDEMU;EXTERNAL_LIBCDIO_CONFIG_H;NO_CODECS;HAVE_DIRECTSOUND;USE_D3D;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -118,6 +118,7 @@
       </PrecompiledHeader>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d10.lib;d3dcompiler.lib;dxgi.lib;vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;ws2_32.lib;dxguid.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
