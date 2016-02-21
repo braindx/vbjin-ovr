@@ -4,6 +4,5 @@
 __bins/
 *.opensdf
 *.suo
-*.sdf
-*.idb
-*.pdb
+*.sdf 
+Debug_vc10/
