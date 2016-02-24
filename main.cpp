@@ -242,17 +242,17 @@ int WINAPI WinMain( HINSTANCE hInstance,
 		}
 		else {
 			// lock fps @ 60fps
-			QueryPerformanceCounter(&nNow);
-			if (nNow.QuadPart - nLast.QuadPart > _animationInterval.QuadPart)
-			{
-				nLast.QuadPart = nNow.QuadPart - (nNow.QuadPart % _animationInterval.QuadPart);
+			//QueryPerformanceCounter(&nNow);
+			//if (nNow.QuadPart - nLast.QuadPart > _animationInterval.QuadPart)
+			//{
+			//	nLast.QuadPart = nNow.QuadPart - (nNow.QuadPart % _animationInterval.QuadPart);
 				emulate();
 				render();
-			}
-			else
-			{
+			//}
+			//else
+			/*{
 				Sleep(1);
-			}
+			}*/
 
 			
 		}

@@ -204,7 +204,7 @@ void render( ovrEyeType eye )
 	aggDraw.hud->attach( convert_buffer, pcejin.width, pcejin.height, 4 * pcejin.width );
 	UpdateTexture( eye );
 }
-byte idx = 0;
+unsigned long long idx = 0;
 void render()
 {
 	if (isOculusExists == false)
@@ -282,8 +282,8 @@ void render()
 		}
 		 
 	} 
-	{
-		if (MDFN_IEN_VB::GetSplitMode() != MDFN_IEN_VB::VB3DMODE_OVR)
+	else
+	{ 
 			render( ovrEye_Right );
 		pRender->SetDefaultRenderTarget(); 
 
@@ -293,7 +293,7 @@ void render()
 		int WindowHeight = rc.bottom - rc.top; 
 		pRender->SetViewport(fullViewport);
 
-		pRender->Clear(0,0.5,0.5,1);
+		pRender->Clear();
 		pRender->SetProjection(Matrix4f()); 
 		pRender->SetDepthMode( false, false );
 		float aspectRatio =  (float)pcejin.width / pcejin.height / ((float)pRender->D3DViewport.Width / pRender->D3DViewport.Height);
