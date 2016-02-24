@@ -730,8 +730,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 
-	case WM_KEYUP:
-		debug_callback(wParam);
+	case WM_KEYUP: 
 		if(wParam != VK_PAUSE)
 			break;
 	case WM_SYSKEYUP:

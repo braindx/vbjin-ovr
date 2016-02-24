@@ -27,7 +27,7 @@
 #include "OVR_CAPI_D3D.h"
 
 
-
+float IDPFactor = 0;
 using namespace OVR;
 ovrHmd             HMD;
 ovrHmdDesc			HmdDesc;
@@ -72,19 +72,25 @@ static void __forceinline convert32( int eye ){
 		}
 	}
 }
-
-float offset = -0.05;
-void debug_callback(int data)
+ 
+void updateIPDFactor(bool isIncrease)
 {
-	if (data == VK_F11)
+	if (isIncrease)
 	{
-		offset += 0.5;
+		IDPFactor += 0.02;
+
+		osd->addLine("IPD Increased to  %.3f \n", IDPFactor);
+		printf("IPD Increase to  %.3f \n", IDPFactor);
 	}
-	if (data == VK_F12)
-	{ 
-		offset -= 0.5;
-	}
-	printf("\n Curren offset is %.3f \n",offset);
+	else
+	{
+		IDPFactor -= 0.02;
+		osd->addLine("IPD Decreased to  %.3f \n", IDPFactor);
+		printf("IPD Decrease to  %.3f \n", IDPFactor);
+	} 
+	char c[8];
+	sprintf(c, "%.3f", IDPFactor);
+	WritePrivateProfileString("Display", "IPDFactor", c, IniName);
 }
 void OculusInit()
 {
@@ -98,6 +104,11 @@ void OculusInit()
 	else
 	{
 		printf("ovr_Initialize success.\n");
+
+		char retval[256];
+		 GetPrivateProfileString("Display", "IPDFactor", "-0.230",retval,256, IniName);
+		 IDPFactor = atof(retval);
+
 	}
 }
 
@@ -256,12 +267,18 @@ void render()
 			pRender->Clear();
 			pRender->SetProjection( Matrix4f() );
 			pRender->SetDepthMode( false, false );
-			float aspectRatio = (float)pcejin.width / pcejin.height / ( (float)EyeRenderViewport[eye].Size.w / EyeRenderViewport[eye].Size.h );
+			float scaleFactor = 2;
+			float aspectRatio = (float)pcejin.width / pcejin.height / ( (float)EyeRenderViewport[eye].Size.w / EyeRenderViewport[eye].Size.h ) ;
 			Matrix4f view = Matrix4f( 
-				1, 0, 0, 0,
-				0, 1 / aspectRatio, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1 );
+				1 * aspectRatio, 0, 0, 0,
+				0, 1 / aspectRatio* aspectRatio, 0, 0,
+				0, 0, 1 * aspectRatio, 0,
+				0, 0, 0, 1 * aspectRatio);  
+			if (eyeIndex == 1)
+				view.SetTranslation(Vector3f(IDPFactor, 0, 0));
+			else
+				view.SetTranslation(Vector3f(-IDPFactor, 0, 0));
+			//view = view.Scaling(0.8)*view;
 			  pRender->Render( vbShaderFill, QuadVertexBuffer, NULL, view, 0, 4, Render::Prim_TriangleStrip);
 
 			  ld.ColorTexture[eyeIndex] = pRenderTargetTexture[eyeIndex]->TextureSet;

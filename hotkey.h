@@ -79,6 +79,10 @@ SCustomKey FastForwardToggle, IncreaseSpeed, DecreaseSpeed;
 	SCustomKey HardReset;
 	SCustomKey Pause;
 	SCustomKey FrameAdvance;
+
+	SCustomKey IPDFactorDecrease;
+	SCustomKey IPDFactorIncrease;
+
 	SCustomKey QuickSave, QuickLoad, NextSaveSlot, PreviousSaveSlot;
 	SCustomKey Save[10];
 	SCustomKey Load[10];
@@ -113,6 +117,8 @@ void HK_StateLoadSlot(int);
 void HK_StateSetSlot(int);
 void HK_Pause(int);
 void HK_FastForward(int);
+void HK_StateQuickSaveSlot(int); 
+void HK_StateQuickLoadSlot(int); 
 
 extern bool AutoHoldPressed;
 

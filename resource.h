@@ -109,6 +109,7 @@
 #define IDC_II                          405
 #define IDC_RUN                         406
 #define IDC_SELECT                      407
+#define IDC_LABEL_QSAVE                 408
 #define IDC_LABEL_RIGHT                 410
 #define IDC_LABEL_UP                    411
 #define IDC_LABEL_LEFT                  412
@@ -118,6 +119,8 @@
 #define IDC_LABEL_SELECT                416
 #define IDC_LABEL_RUN                   417
 #define IDD_INPUTCONFIG                 418
+#define IDC_RUN3                        418
+#define IDC_LABEL_QLOAD                 418
 #define IDC_ALLOWLEFTRIGHT              419
 #define IDM_INPUT_CONFIG                420
 #define IDC_Y                           421
@@ -193,6 +196,7 @@
 #define ID_CANCEL                       1002
 #define IDC_COMBO1                      1003
 #define IDC_GO                          1004
+#define IDC_LABEL_QSAVE_STATIC          1004
 #define IDC_TEXTDUMP                    1005
 #define IDC_MEMVIEWBOX                  1006
 #define IDC_ADDRESS                     1007
@@ -257,7 +261,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1004
+#define _APS_NEXT_CONTROL_VALUE         1005
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif
