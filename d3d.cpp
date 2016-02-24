@@ -27,6 +27,7 @@
 #include "OVR_CAPI_D3D.h"
 
 
+
 using namespace OVR;
 ovrHmd             HMD;
 ovrHmdDesc			HmdDesc;
@@ -72,6 +73,19 @@ static void __forceinline convert32( int eye ){
 	}
 }
 
+float offset = -0.05;
+void debug_callback(int data)
+{
+	if (data == VK_F11)
+	{
+		offset += 0.5;
+	}
+	if (data == VK_F12)
+	{ 
+		offset -= 0.5;
+	}
+	printf("\n Curren offset is %.3f \n",offset);
+}
 void OculusInit()
 {
 	ovrResult error = ovr_Initialize(NULL);
@@ -190,7 +204,7 @@ void render( ovrEyeType eye )
 	aggDraw.hud->attach( convert_buffer, pcejin.width, pcejin.height, 4 * pcejin.width );
 	UpdateTexture( eye );
 }
-
+byte idx = 0;
 void render()
 {
 	if (isOculusExists == false)
@@ -199,7 +213,15 @@ void render()
 		return;
 	}
 	ovrPosef eyeRenderPose[2];
+	/*eyeRenderPose[0].Position.x = offset;
+	eyeRenderPose[1].Position.x = -offset;
 
+	double ftiming = ovr_GetPredictedDisplayTime(HMD, 0);
+	ovrTrackingState trackingState = ovr_GetTrackingState(HMD, ftiming, ovrTrue);
+	ovrVector3f useHmdToEyeViewOffset[2] = { EyeRenderDesc[0].HmdToEyeViewOffset,
+		EyeRenderDesc[1].HmdToEyeViewOffset };
+	ovr_CalcEyePoses(trackingState.HeadPose.ThePose, useHmdToEyeViewOffset, eyeRenderPose);
+	*/
 	if( !pcejin.romLoaded || espec.skip )
 	{
 		return;
@@ -249,8 +271,8 @@ void render()
 		}
 		pRender->FinishScene();	  
 		ovrLayerHeader* layers = &ld.Header;
-		ovrViewScaleDesc viewScaleDesc;  
-		ovrResult result = ovr_SubmitFrame(HMD, 0, nullptr, &layers, 1);
+		ovrResult result = ovr_SubmitFrame(HMD, idx, nullptr, &layers, 1);
+		idx++;
 		if (!OVR_SUCCESS(result))
 		{
 			char c[256] = { 0 };
@@ -259,10 +281,10 @@ void render()
 			return;
 		}
 		 
-	}
-	else
+	} 
 	{
-		render( ovrEye_Right );
+		if (MDFN_IEN_VB::GetSplitMode() != MDFN_IEN_VB::VB3DMODE_OVR)
+			render( ovrEye_Right );
 		pRender->SetDefaultRenderTarget(); 
 
 		RECT rc;

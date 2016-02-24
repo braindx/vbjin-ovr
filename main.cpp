@@ -47,6 +47,9 @@
 
 std::string GameName;
 
+
+LARGE_INTEGER       _animationInterval;
+
 volatile MDFN_Surface *VTBuffer[2] = { NULL, NULL };
 MDFN_Rect *VTLineWidths[2] = { NULL, NULL };
 volatile int VTBackBuffer = 0;
@@ -104,6 +107,7 @@ DWORD hKeyInputTimer;
 int KeyInDelayMSec = 0;
 int KeyInRepeatMSec = 16;
 
+double interval =  0.0166666666666667;//60 fps
 WNDCLASSEX winClass;
 int WINAPI WinMain( HINSTANCE hInstance,
 				   HINSTANCE hPrevInstance,
@@ -111,6 +115,13 @@ int WINAPI WinMain( HINSTANCE hInstance,
 				   int nCmdShow )
 {
 	MSG uMsg;
+	 
+	LARGE_INTEGER nLast;
+	LARGE_INTEGER nNow;
+	LARGE_INTEGER nFreq;
+	QueryPerformanceFrequency(&nFreq); 
+	QueryPerformanceCounter(&nLast);
+	_animationInterval.QuadPart = (LONGLONG)(interval * nFreq.QuadPart);
 
 	memset(&uMsg,0,sizeof(uMsg));
 
@@ -230,8 +241,20 @@ int WINAPI WinMain( HINSTANCE hInstance,
 			DispatchMessage( &uMsg );
 		}
 		else {
-			emulate();
-			render();
+			// lock fps @ 60fps
+			QueryPerformanceCounter(&nNow);
+			if (nNow.QuadPart - nLast.QuadPart > _animationInterval.QuadPart)
+			{
+				nLast.QuadPart = nNow.QuadPart - (nNow.QuadPart % _animationInterval.QuadPart);
+				emulate();
+				render();
+			}
+			else
+			{
+				Sleep(1);
+			}
+
+			
 		}
 		if(!pcejin.started)
 			Sleep(1);
@@ -706,7 +729,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				return 0;
 			break;
 		}
+
 	case WM_KEYUP:
+		debug_callback(wParam);
 		if(wParam != VK_PAUSE)
 			break;
 	case WM_SYSKEYUP:

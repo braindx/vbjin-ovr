@@ -8,7 +8,7 @@ void render();
 void SetupOculus( bool warnIfNotFound );
 void OculusInit();
 void DismissHSWDisplay();
-
+void  debug_callback(int data);
 #endif // #if USE_D3D
 
 #endif // #ifndef __D3D_H_
