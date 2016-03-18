@@ -61,6 +61,9 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">vbjin_debug</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseFastBuild|Win32'">vbjin_releaseFastBuild</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>G:\vbjin-ovr\OculusSDK\LibOVRKernel\Src;G:\vbjin-ovr\OculusSDK\LibOVR\Include;G:\vbjin-ovr\OculusSDK\LibOVRKernel;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Command>
@@ -69,7 +72,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;oculus\LibOVR\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;WANT_PCE_EMU;NEED_CDEMU;EXTERNAL_LIBCDIO_CONFIG_H;NO_CODECS;HAVE_DIRECTSOUND;USE_D3D=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;WANT_PCE_EMU;NEED_CDEMU;EXTERNAL_LIBCDIO_CONFIG_H;NO_CODECS;HAVE_DIRECTSOUND;USE_D3D=1;USE_DDRAW=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -77,6 +80,7 @@
       </PrecompiledHeader>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d10.lib;d3d11.lib;dxgi.lib;vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;ws2_32.lib;dxguid.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -103,8 +107,8 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;oculus\LibOVR\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;WANT_PCE_EMU;NEED_CDEMU;EXTERNAL_LIBCDIO_CONFIG_H;NO_CODECS;HAVE_DIRECTSOUND;USE_D3D;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>G:\vbjin-ovr\OculusSDK\LibOVRKernel\Src;blip;compress;zlib;trio;.;libcdio-0.81\include\;libcdio-0.81\lib\driver;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb;$(DXSDK_DIR)\Include;G:\vbjin-ovr\OculusSDK\LibOVR\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;WANT_PCE_EMU;NEED_CDEMU;EXTERNAL_LIBCDIO_CONFIG_H;NO_CODECS;HAVE_DIRECTSOUND;USE_D3D;USE_DDRAW;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -114,6 +118,7 @@
       </PrecompiledHeader>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d10.lib;d3dcompiler.lib;dxgi.lib;vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;ws2_32.lib;dxguid.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -204,7 +209,42 @@
     <ClCompile Include="memView.cpp" />
     <ClCompile Include="mednafen\src\compress\minilzo.c" />
     <ClCompile Include="movie.cpp" />
-    <ClCompile Include="oculus\RenderTiny_D3D11_Device.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Alg.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Allocator.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Atomic.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Callbacks.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_CRC32.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_DebugHelp.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_File.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_FileFILE.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_JSON.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Lockless.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Log.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_mach_exc_OSX.c" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Rand.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_RefCount.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_SharedMemory.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Std.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_String.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_String_FormatUtil.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_String_PathUtil.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_SysFile.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_System.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_ThreadCommandQueue.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_ThreadsPthread.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_ThreadsWinAPI.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Timer.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_UTF8Util.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_D3D11_Blitter.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_Direct3D.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_GetSystemSpecs.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_ImageWindow.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_LongPollThread.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_SystemGUI.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_SystemInfo.cpp" />
+    <ClCompile Include="OculusSDK\LibOVRKernel\Src\Util\Util_Watchdog.cpp" />
+    <ClCompile Include="OculusSDK\Render\Render_D3D11_Device.cpp" />
+    <ClCompile Include="OculusSDK\Render\Render_Device.cpp" />
     <ClCompile Include="ParseCmdLine.cpp" />
     <ClCompile Include="mednafen\src\video\png.cpp" />
     <ClCompile Include="mednafen\src\compress\quicklz.cpp" />
@@ -290,7 +330,56 @@
     <ClInclude Include="mednafen\include\trio\triostr.h" />
     <ClInclude Include="memView.h" />
     <ClInclude Include="movie.h" />
-    <ClInclude Include="oculus\RenderTiny_D3D11_Device.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Alg.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Allocator.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Array.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Atomic.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Callbacks.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_CallbacksInternal.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Color.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Compiler.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_ContainerAllocator.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_CRC32.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_DebugHelp.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Delegates.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Deque.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_File.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Hash.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_JSON.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_KeyCodes.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_List.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Lockless.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Log.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_mach_exc_OSX.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Nullptr.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Rand.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_RefCount.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_SharedMemory.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Std.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_String.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_StringHash.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_SysFile.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_System.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_ThreadCommandQueue.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Threads.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Timer.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Types.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_UTF8Util.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_Win32_IncludeWindows.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Tracing\LibOVREvents.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Tracing\Tracing.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Shaders\Blt_ps.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Shaders\Blt_vs.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_D3D11_Blitter.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_Direct3D.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_ImageWindow.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_LongPollThread.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_SystemGUI.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_SystemInfo.h" />
+    <ClInclude Include="OculusSDK\LibOVRKernel\Src\Util\Util_Watchdog.h" />
+    <ClInclude Include="OculusSDK\Render\Render_D3D11_Device.h" />
+    <ClInclude Include="OculusSDK\Render\Render_Device.h" />
+    <ClInclude Include="OculusSDK\Render\Render_Font.h" />
     <ClInclude Include="ParseCmdLine.h" />
     <ClInclude Include="pcejin.h" />
     <ClInclude Include="prefix.h" />
@@ -325,6 +414,7 @@
     <None Include="mednafen\src\hw_cpu\v810\v810_op_table.inc" />
     <None Include="mednafen\src\hw_cpu\v810\v810_oploop.inc" />
     <None Include="mednafen\src\vb\vip_draw.inc" />
+    <None Include="OculusSDK\LibOVRKernel\Src\Kernel\OVR_NewOverride.inl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="pcejin.rc" />

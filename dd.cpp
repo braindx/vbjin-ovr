@@ -247,7 +247,7 @@ ddsd.dwSize = sizeof(DDSURFACEDESC2);
 }*/
 
 
-void render() {
+void renderDD() {
 
 	if(!pcejin.romLoaded || espec.skip)
 		return;

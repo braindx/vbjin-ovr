@@ -198,6 +198,10 @@ LRESULT InputCustom_OnPaint(InputCust *ccp, WPARAM wParam, LPARAM lParam);
 #define INPUTCONFIG_LABEL_UPRIGHT "R-Left"
 #define INPUTCONFIG_LABEL_DOWNRIGHT "R-Down"
 #define INPUTCONFIG_LABEL_DOWNLEFT "R-Right"
+
+#define INPUTCONFIG_LABEL_QLOAD "Quick Load"
+#define INPUTCONFIG_LABEL_QSAVE "Quick Save"
+
 #define INPUTCONFIG_LABEL_BLUE "Blue means the button is already mapped.\nPink means it conflicts with a custom hotkey.\nRed means it's reserved by Windows.\nButtons can be disabled using Escape.\nGrayed buttons arent supported yet (sorry!)"
 #define INPUTCONFIG_LABEL_UNUSED ""
 #define INPUTCONFIG_LABEL_CLEAR_TOGGLES_AND_TURBO "Clear All"
@@ -1495,8 +1499,13 @@ switch(msg)
 		SetDlgItemText(hDlg,IDC_LABEL_UPRIGHT,INPUTCONFIG_LABEL_UPRIGHT);
 		SetDlgItemText(hDlg,IDC_LABEL_UPLEFT,INPUTCONFIG_LABEL_UPLEFT);
 		SetDlgItemText(hDlg,IDC_LABEL_DOWNRIGHT,INPUTCONFIG_LABEL_DOWNRIGHT);
-		SetDlgItemText(hDlg,IDC_LABEL_DOWNLEFT,INPUTCONFIG_LABEL_DOWNLEFT);
-		SetDlgItemText(hDlg,IDC_LABEL_BLUE,INPUTCONFIG_LABEL_BLUE);
+		SetDlgItemText(hDlg, IDC_LABEL_DOWNLEFT, INPUTCONFIG_LABEL_DOWNLEFT);
+		SetDlgItemText(hDlg, IDC_LABEL_BLUE, INPUTCONFIG_LABEL_BLUE);
+
+
+		SetDlgItemText(hDlg, IDC_LABEL_QLOAD, INPUTCONFIG_LABEL_QLOAD);
+		SetDlgItemText(hDlg, IDC_LABEL_QSAVE, INPUTCONFIG_LABEL_QSAVE);
+
 
 		for(i=5;i<10;i++)
 			Joypad[i].Left_Up = Joypad[i].Right_Up = Joypad[i].Left_Down = Joypad[i].Right_Down = 0;
@@ -1550,6 +1559,12 @@ switch(msg)
 		which = GetDlgCtrlID((HWND)lParam);
 		switch(which)
 		{
+		/*case IDC_LABEL_QSAVE:
+			CustomKeys.QuickSave.key = wParam;
+			break;
+		case IDC_LABEL_QLOAD:
+			CustomKeys.QuickLoad.key = wParam;
+			break;*/
 		case IDC_UP:
 			Joypad[index].Left_Up = wParam;
 
@@ -2233,7 +2248,7 @@ int HandleKeyMessage(WPARAM wParam, LPARAM lParam, int modifiers)
 {
 	if ( wParam > 0x06 )
 	{
-		DismissHSWDisplay();
+//		DismissHSWDisplay();
 	}
 
 	// update toggles
@@ -3365,6 +3380,10 @@ void FrameAdvance(bool state);
 void HK_FrameAdvanceKeyDown(int) { FrameAdvance(true); }
 void HK_FrameAdvanceKeyUp(int) { FrameAdvance(false); }
 
+
+void HK_IPDIncrease(int) { updateIPDFactor(true); }
+void HK_IPDDecrease(int) { updateIPDFactor(false); }
+
 void HK_Pause(int) {pcejin.pause();}
 
 void HK_FastForwardToggle(int) {pcejin.fastForward ^=1;}; //FastForward ^=1; }
@@ -3424,6 +3443,20 @@ void InitCustomKeys (SCustomKeys *keys)
 	keys->FrameAdvance.name = L"Frame Advance";
 	keys->FrameAdvance.page = HOTKEY_PAGE_MAIN;
 	keys->FrameAdvance.key = 'N';
+
+
+
+	keys->IPDFactorDecrease.handleKeyDown = HK_IPDIncrease;
+	keys->IPDFactorDecrease.code = "IPDFactorDecrease";
+	keys->IPDFactorDecrease.name = L"IPD Factor Decrease";
+	keys->IPDFactorDecrease.page = HOTKEY_PAGE_MAIN;
+	keys->IPDFactorDecrease.key = NULL;
+
+	keys->IPDFactorIncrease.handleKeyDown = HK_IPDDecrease;
+	keys->IPDFactorIncrease.code = "IPDFactorIncrease";
+	keys->IPDFactorIncrease.name = L"IPD Factor Increas";
+	keys->IPDFactorIncrease.page = HOTKEY_PAGE_MAIN;
+	keys->IPDFactorIncrease.key = NULL;
 
 	keys->FastForward.handleKeyDown = HK_FastForwardKeyDown;
 	keys->FastForward.handleKeyUp = HK_FastForwardKeyUp;
