@@ -6,7 +6,7 @@ VBjin-OVR is a Virtual Boy Emulator for Windows with support for the Oculus Rift
 3.0 (Oculus PC SDK 1.3.0, compatible with the CV1)
 
 ### Getting Started
-1. Download the [latest release] and unzip it
+1. Download the [latest release]
 2. Make sure you have 'Unknown Sources' enabled in your Oculus Rift settings. To do this, check out the [Oculus support page on the subject]
 3. Run VBjin-OVR.exe
 4. Gamepad controls can be configured under Config -> Input Config
@@ -23,6 +23,6 @@ In this mode, the screen is fixed in view and head tracking is ignored.
 ### Oculus Rift Mode: Immersive
 In this mode, the screen is placed in the world and head tracking is used to allow you to look around. This mode should be considered experimental and suffers from artifacts inherent to the Virtual Boy's implementation. For example, rolling your head side to side will break the illusion because the Virtual Boy only separates the left and right eyes horizontally.
 
-[latest release]: <https://github.com/braindx/vbjin-ovr>
+[latest release]: <https://github.com/braindx/vbjin-ovr/releases/download/3.0/VBjin-OVR.exe>
 [vbjin]: <https://code.google.com/archive/p/vbjin>
 [Oculus support page on the subject]: <https://support.oculus.com/878170922281071>
