@@ -58,50 +58,15 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
-        MENUITEM "1x",                          IDC_WINDOW1X
-        MENUITEM "1.5x",                        IDC_WINDOW15X
-        MENUITEM "2x",                          IDC_WINDOW2X
-        MENUITEM "2.5x",                        IDC_WINDOW25X
-        MENUITEM "3x",                          IDC_WINDOW3X
-        MENUITEM "4x",                          IDC_WINDOW4X
-        MENUITEM SEPARATOR
-        MENUITEM "4/3 Aspect Ratio",            IDC_ASPECT
-        MENUITEM SEPARATOR
-        MENUITEM "Mix Left && Right View",      ID_VIEW_MIXLEFTRIGHT
         POPUP "Coloring"
         BEGIN
-            MENUITEM "Red/Blue",                    ID_COLOR_MODE_REDBLUE
-            MENUITEM "Red/Cyan",                    ID_COLOR_MODE_REDCYAN
-            MENUITEM "Red/Electric Cyan",           ID_COLOR_MODE_REDELECTRICCYAN
-            MENUITEM "Red/Green",                   ID_COLOR_MODE_REDGREEN
-            MENUITEM "Green/Magenta",               ID_COLOR_MODE_GREENMAGENTA
-            MENUITEM "Yellow/Blue",                 ID_COLOR_MODE_YELLOWBLUE
-            MENUITEM "Greyscale",                   ID_COLOR_MODE_GREYSCALE
             MENUITEM "Red",                         ID_COLOR_MODE_RED
+            MENUITEM "Greyscale",                   ID_COLOR_MODE_GREYSCALE
         END
-        POPUP "Splitting Mode"
+        POPUP "Oculus Rift Mode"
         BEGIN
-            MENUITEM "Anaglyph",                    ID_SPLIT_MODE_ANAGLYPH
-            MENUITEM "CScope",                      ID_SPLIT_MODE_CSCOPE
-            MENUITEM "Side By Side",                ID_SPLIT_MODE_SIDEBYSIDE
-            MENUITEM "PBarrier",                    ID_SPLIT_MODE_PBARRIER
-            MENUITEM "Oculus Rift",                 ID_SPLIT_MODE_OVR
-        END
-        POPUP "Side By Side Separation"
-        BEGIN
-            MENUITEM "16 pixels",                   ID_PIXEL_SEP_16
-            MENUITEM "32 pixels",                   ID_PIXEL_SEP_32
-            MENUITEM "48 pixels",                   ID_PIXEL_SEP_48
-            MENUITEM "64 pixels",                   ID_PIXEL_SEP_64
-            MENUITEM "80 pixels",                   ID_PIXEL_SEP_80
-            MENUITEM "96 pixels",                   ID_PIXEL_SEP_96
-        END
-        POPUP "Video Display"
-        BEGIN
-            MENUITEM "Both",                        ID_VIEW_DISP_BOTH
-            MENUITEM "Left Only",                   ID_VIEW_DISP_LEFT
-            MENUITEM "Right Only",                  ID_VIEW_DISP_RIGHT
-            MENUITEM "Disabled",                    ID_VIEW_DISP_DISABLE
+            MENUITEM "Head Locked",                 ID_OCULUSRIFTMODE_HEADLOCKED
+            MENUITEM "Immersive",                   ID_OCULUSRIFTMODE_IMMERSIVE
         END
         MENUITEM "Open Console (Restart)",      ID_VIEW_OPENCONSOLE
         MENUITEM "Display Frame Counter",       ID_VIEW_FRAMECOUNTER
@@ -254,7 +219,7 @@ CAPTION "About"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     LTEXT           "version",IDC_TXT_VERSION,14,67,114,8,SS_NOPREFIX
-    LTEXT           "http://github.com/vbjin-ovr/",IDC_STATIC,14,85,114,8
+    LTEXT           "github.com/braindx/vbjin-ovr",IDC_STATIC,14,85,114,8
     DEFPUSHBUTTON   "OK",IDOK,113,108,50,14,WS_GROUP
     LTEXT           "For more information visit:",IDC_STATIC,14,76,85,8
     LTEXT           "VBjin-OVR",IDC_STATIC,14,10,57,8

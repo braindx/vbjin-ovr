@@ -504,8 +504,8 @@ DWORD checkMenu(UINT idd, bool check)
 
 void LoadIniSettings(){
 	MixVideoOutput = GetPrivateProfileBool("Display","MixLeftRight", false, IniName);
-	MDFN_IEN_VB::SetSplitMode(GetPrivateProfileInt("Display","SplitMode", 0, IniName));
-	MDFN_IEN_VB::SetColorMode(GetPrivateProfileInt("Display","ColorMode", 0, IniName));
+	MDFN_IEN_VB::SetSplitMode( GetPrivateProfileInt( "Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_OVR, IniName ) );
+	MDFN_IEN_VB::SetColorMode(GetPrivateProfileInt("Display","ColorMode", 7, IniName));
 	SideBySidePixels = GetPrivateProfileInt("Display","SideBySidePixels", 16, IniName);
 	if (abs(SideBySidePixels) > 96)
 		SideBySidePixels = 96;
@@ -865,6 +865,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		checkMenu(ID_SPLIT_MODE_SIDEBYSIDE, ((MDFN_IEN_VB::GetSplitMode()==MDFN_IEN_VB::VB3DMODE_SIDEBYSIDE)));
 		checkMenu(ID_SPLIT_MODE_PBARRIER, ((MDFN_IEN_VB::GetSplitMode()==MDFN_IEN_VB::VB3DMODE_PBARRIER)));
 		checkMenu(ID_SPLIT_MODE_OVR, ((MDFN_IEN_VB::GetSplitMode()==MDFN_IEN_VB::VB3DMODE_OVR)));
+		checkMenu(ID_OCULUSRIFTMODE_HEADLOCKED, ((MDFN_IEN_VB::GetSplitMode()==MDFN_IEN_VB::VB3DMODE_OVR)));
+		checkMenu(ID_OCULUSRIFTMODE_IMMERSIVE, ((MDFN_IEN_VB::GetSplitMode()==MDFN_IEN_VB::VB3DMODE_OVR_IMMERSIVE)));
 		checkMenu(ID_VIEW_DISP_BOTH, ((DisplayLeftRightOutput==0)));
 		checkMenu(ID_VIEW_DISP_LEFT, ((DisplayLeftRightOutput==1)));
 		checkMenu(ID_VIEW_DISP_RIGHT, ((DisplayLeftRightOutput==2)));
@@ -1012,6 +1014,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		case ID_SPLIT_MODE_OVR:
 			MDFN_IEN_VB::SetSplitMode(MDFN_IEN_VB::VB3DMODE_OVR);
 			WritePrivateProfileInt("Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_OVR, IniName);
+			break;
+		case ID_OCULUSRIFTMODE_HEADLOCKED:
+			MDFN_IEN_VB::SetSplitMode( MDFN_IEN_VB::VB3DMODE_OVR );
+			WritePrivateProfileInt( "Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_OVR, IniName );
+			break;
+		case ID_OCULUSRIFTMODE_IMMERSIVE:
+			MDFN_IEN_VB::SetSplitMode( MDFN_IEN_VB::VB3DMODE_OVR_IMMERSIVE );
+			WritePrivateProfileInt( "Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_OVR_IMMERSIVE, IniName );
+			break;
 			break;
 		case ID_PIXEL_SEP_16:
 			SideBySidePixels = 16;

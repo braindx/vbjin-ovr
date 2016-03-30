@@ -133,6 +133,10 @@ struct SJoyState{
     bool Right;
     bool Up;
     bool Down;
+	bool RightLeft;
+	bool RightRight;
+	bool RightUp;
+	bool RightDown;
     bool PovLeft;
     bool PovRight;
     bool PovUp;
@@ -221,6 +225,10 @@ LRESULT InputCustom_OnPaint(InputCust *ccp, WPARAM wParam, LPARAM lParam);
 #define GAMEDEVICE_XPOS "Right"
 #define GAMEDEVICE_YPOS "Up"
 #define GAMEDEVICE_YNEG "Down"
+#define GAMEDEVICE_R_XNEG "RS-Left"
+#define GAMEDEVICE_R_XPOS "RS-Right"
+#define GAMEDEVICE_R_YPOS "RS-Up"
+#define GAMEDEVICE_R_YNEG "RS-Down"
 #define GAMEDEVICE_POVLEFT "POV Left"
 #define GAMEDEVICE_POVRIGHT "POV Right"
 #define GAMEDEVICE_POVUP "POV Up"
@@ -843,8 +851,10 @@ void di_poll_scan()
 			if (FAILED(hr)) hr=pJoystick->Acquire();
 			else
 			{
-				CheckAxis(0,0,JoyStatus.lX,-10000,10000,Joystick[0].Left,Joystick[0].Right);
-				CheckAxis(0,2,JoyStatus.lY,-10000,10000,Joystick[0].Down,Joystick[0].Up);
+				CheckAxis(0,0,JoyStatus.lX,-10000,10000,JoystickF[C].Left,JoystickF[C].Right);
+				CheckAxis(0,2,JoyStatus.lY,-10000,10000,JoystickF[C].Down,JoystickF[C].Up);
+				CheckAxis(0,8,JoyStatus.lRx,-10000,10000,JoystickF[C].RightLeft,JoystickF[C].RightRight);
+				CheckAxis(0,10,JoyStatus.lRy,-10000,10000,JoystickF[C].RightDown,JoystickF[C].RightUp);
 		
 				 switch (JoyStatus.rgdwPOV[0])
 				{
@@ -969,7 +979,7 @@ void di_poll_scan()
         {
             if( !JoystickF[C].Button[B])
             {
-                JoystickChanged( C, (short)(8+B));
+                JoystickChanged( C, (short)(12+B));
                 JoystickF[C].Button[B] = true;
             }
         }
@@ -1724,7 +1734,7 @@ bool S9xGetState (WORD KeyIdent)
                 if ((KeyIdent & 0xff) > 40)
                     return true; // not pressed
                 
-                return !Joystick [j].Button [(KeyIdent & 0xff) - 8];
+                return !Joystick [j].Button [(KeyIdent & 0xff) - 12];
         }
     }
 
@@ -2025,6 +2035,10 @@ void DisplayMessage(char* str) {
 #define GAMEDEVICE_XPOS "Right"
 #define GAMEDEVICE_YPOS "Up"
 #define GAMEDEVICE_YNEG "Down"
+#define GAMEDEVICE_R_XNEG "RS-Left"
+#define GAMEDEVICE_R_XPOS "RS-Right"
+#define GAMEDEVICE_R_YPOS "RS-Up"
+#define GAMEDEVICE_R_YNEG "RS-Down"
 #define GAMEDEVICE_POVLEFT "POV Left"
 #define GAMEDEVICE_POVRIGHT "POV Right"
 #define GAMEDEVICE_POVUP "POV Up"
@@ -2231,11 +2245,6 @@ int HandleKeyUp(WPARAM wParam, LPARAM lParam, int modifiers)
 
 int HandleKeyMessage(WPARAM wParam, LPARAM lParam, int modifiers)
 {
-	if ( wParam > 0x06 )
-	{
-		DismissHSWDisplay();
-	}
-
 	// update toggles
 	for (int J = 0; J < 5; J++)
 	{
@@ -2487,6 +2496,10 @@ void TranslateKey(WORD keyz,char *out)
 		case 5:  strcat(out,GAMEDEVICE_POVRIGHT); break;
 		case 6:  strcat(out,GAMEDEVICE_POVUP); break;
 		case 7:  strcat(out,GAMEDEVICE_POVDOWN); break;
+		case 8:  strcat(out,GAMEDEVICE_R_XNEG); break;
+		case 9:  strcat(out,GAMEDEVICE_R_XPOS); break;
+		case 10: strcat(out,GAMEDEVICE_R_YPOS); break;
+		case 11: strcat(out,GAMEDEVICE_R_YNEG); break;
 		case 49: strcat(out,GAMEDEVICE_POVDNLEFT); break;
 		case 50: strcat(out,GAMEDEVICE_POVDNRIGHT); break;
 		case 51: strcat(out,GAMEDEVICE_POVUPLEFT); break;
@@ -2507,7 +2520,7 @@ void TranslateKey(WORD keyz,char *out)
 				break;
             }
 
-			sprintf(temp,GAMEDEVICE_BUTTON,(keyz&0xFF)-8);
+			sprintf(temp,GAMEDEVICE_BUTTON,(keyz&0xFF)-12);
 			strcat(out,temp);
 			break;
 

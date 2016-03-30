@@ -205,6 +205,9 @@
 #define ID_COLOR_MODE_RED               32772
 #define ID_SPLITTINGMODE_OCULUSRIFT     32773
 #define ID_SPLIT_MODE_OVR               32774
+#define ID_VIEW_OCULUSRIFTMODE          32775
+#define ID_OCULUSRIFTMODE_HEADLOCKED    32776
+#define ID_OCULUSRIFTMODE_IMMERSIVE     32777
 #define IDC_LABEL_HK1                   60001
 #define IDC_LABEL_HK2                   60002
 #define IDC_LABEL_HK3                   60003
@@ -256,7 +259,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        136
-#define _APS_NEXT_COMMAND_VALUE         32775
+#define _APS_NEXT_COMMAND_VALUE         32778
 #define _APS_NEXT_CONTROL_VALUE         1004
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

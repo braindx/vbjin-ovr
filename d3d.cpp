@@ -1,16 +1,6 @@
 #if USE_D3D
 
-/*#ifdef _DEBUG
-#pragma comment( lib, "oculus/LibOVR/Lib/Win32/libovrd.lib" )
-#else
-#pragma comment( lib, "oculus/LibOVR/Lib/Win32/libovr.lib" )
-#endif*/
-
-#ifdef _DEBUG
-#pragma comment( lib, "oculus/LibOVR/Lib/Win32/VS2013/libovrd.lib" )
-#else
-#pragma comment( lib, "oculus/LibOVR/Lib/Win32/VS2013/libovr.lib" )
-#endif
+#pragma comment( lib, "oculus/LibOVR/Lib/Windows/Win32/Release/VS2013/libovr.lib" )
 
 #include "aggdraw.h"
 #include "GPU_osd.h"
@@ -20,19 +10,98 @@
 #include "pcejin.h"
 #include "vb.h"
 
-#include "OVR_CAPI.h"
-#include "oculus/RenderTiny_D3D11_Device.h"
-#define OVR_D3D_VERSION 11
+#include "oculus/Win32_DirectXAppUtil.h"
 #include "OVR_CAPI_D3D.h"
-ovrHmd             HMD;
-ovrEyeRenderDesc   EyeRenderDesc[2];
-ovrD3D11Texture    EyeTexture[2];
-RenderDevice*      pRender = 0;
-Texture*           pRenderTargetTexture = 0;
-Texture*		   vbEyeTexture = 0;
-ShaderFill*		   vbShaderFill = 0;
-ovrRecti           EyeRenderViewport[2];
-Buffer*			   QuadVertexBuffer;
+
+//------------------------------------------------------------
+// ovrSwapTextureSet wrapper class that also maintains the render target views
+// needed for D3D11 rendering.
+struct OculusTexture
+{
+	ovrSession               Session;
+	ovrTextureSwapChain      TextureChain;
+	std::vector<ID3D11RenderTargetView*> TexRtv;
+
+	OculusTexture() :
+		Session( nullptr ),
+		TextureChain( nullptr )
+	{}
+
+	bool Init( ovrSession session, int sizeW, int sizeH )
+	{
+		Session = session;
+
+		ovrTextureSwapChainDesc desc = {};
+		desc.Type = ovrTexture_2D;
+		desc.ArraySize = 1;
+		desc.Format = OVR_FORMAT_R8G8B8A8_UNORM_SRGB;
+		desc.Width = sizeW;
+		desc.Height = sizeH;
+		desc.MipLevels = 1;
+		desc.SampleCount = 1;
+		desc.MiscFlags = ovrTextureMisc_DX_Typeless;
+		desc.BindFlags = ovrTextureBind_DX_RenderTarget;
+		desc.StaticImage = ovrFalse;
+
+		ovrResult result = ovr_CreateTextureSwapChainDX( session, DIRECTX.Device, &desc, &TextureChain );
+		if ( !OVR_SUCCESS( result ) )
+			return false;
+
+		int textureCount = 0;
+		ovr_GetTextureSwapChainLength( Session, TextureChain, &textureCount );
+		for ( int i = 0; i < textureCount; ++i )
+		{
+			ID3D11Texture2D* tex = nullptr;
+			ovr_GetTextureSwapChainBufferDX( Session, TextureChain, i, IID_PPV_ARGS( &tex ) );
+			D3D11_RENDER_TARGET_VIEW_DESC rtvd = {};
+			rtvd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			rtvd.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+			ID3D11RenderTargetView* rtv;
+			DIRECTX.Device->CreateRenderTargetView( tex, &rtvd, &rtv );
+			TexRtv.push_back( rtv );
+			tex->Release();
+		}
+
+		return true;
+	}
+
+	~OculusTexture()
+	{
+		for ( int i = 0; i < (int)TexRtv.size(); ++i )
+		{
+			Release( TexRtv[i] );
+		}
+		if ( TextureChain )
+		{
+			ovr_DestroyTextureSwapChain( Session, TextureChain );
+		}
+	}
+
+	ID3D11RenderTargetView* GetRTV()
+	{
+		int index = 0;
+		ovr_GetTextureSwapChainCurrentIndex( Session, TextureChain, &index );
+		return TexRtv[index];
+	}
+
+	// Commit changes
+	void Commit()
+	{
+		ovr_CommitTextureSwapChain( Session, TextureChain );
+	}
+};
+
+static DepthBuffer* s_eyeDepthBuffers[2];
+static ovrRecti s_eyeRenderViewports[2];
+static OculusTexture* s_eyeTextures[2];
+static long long s_frameIndex = 0;
+static ovrHmdDesc s_hmdDesc;
+static ovrGraphicsLuid s_luid;
+static ovrMirrorTexture s_mirrorTexture = NULL;
+static Scene s_immersiveScene;
+static Scene s_scene;
+static ovrSession s_session;
+static Texture* s_vbEyeTexture;
 
 static void __forceinline convert32( int eye ){
 	uint8 *pb_ptr = (uint8*)convert_buffer;
@@ -62,105 +131,87 @@ static void __forceinline convert32( int eye ){
 
 void OculusInit()
 {
-	ovr_Initialize();
+	ovrResult result = ovr_Initialize( nullptr );
+	assert( OVR_SUCCESS( result ) );
 }
 
-void SetupOculus( bool warnIfNotFound )
+static bool SetupOculus()
 {
-	HMD = ovrHmd_Create( 0 );
+	ovrResult result = ovr_Create( &s_session, &s_luid );
 
-	if ( warnIfNotFound )
+	if ( OVR_FAILURE( result ) )
 	{
-		if ( !HMD )
+		MessageBoxA( NULL, "Oculus Rift not detected.", "", MB_OK );
+		return false;
+	}
+
+	s_hmdDesc = ovr_GetHmdDesc( s_session );
+	if ( !DIRECTX.InitDevice( s_hmdDesc.Resolution.w / 2, s_hmdDesc.Resolution.h / 2, reinterpret_cast<LUID*>( &s_luid ) ) )
+	{
+		MessageBoxA( NULL, "Failed to initialize graphics device.", "", MB_OK );
+		return false;
+	}
+
+	for ( int eye = 0 ; eye < 2 ; ++eye )
+	{
+		ovrSizei idealSize = ovr_GetFovTextureSize( s_session, (ovrEyeType)eye, s_hmdDesc.DefaultEyeFov[eye], 2.0f );
+		// Choose power-of-two sizes that will fit the ideal size
+		ovrSizei textureSize =
 		{
-			MessageBoxA( NULL, "Oculus Rift not detected.", "", MB_OK );
-			return;
+			pow( 2, ceil( log( idealSize.w ) / log( 2 ) ) ),
+			pow( 2, ceil( log( idealSize.h ) / log( 2 ) ) )
+		};
+		s_eyeTextures[eye] = new OculusTexture();
+		if ( !s_eyeTextures[eye]->Init( s_session, textureSize.w, textureSize.h ) )
+		{
+			MessageBoxA( NULL, "Failed to create eye texture.", "", MB_OK );
+			return false;
 		}
-		if ( HMD->ProductName[0] == '\0' )
+		s_eyeDepthBuffers[eye] = new DepthBuffer( DIRECTX.Device, textureSize.w, textureSize.h );
+		s_eyeRenderViewports[eye].Pos.x = textureSize.w / 2 - idealSize.w / 2;
+		s_eyeRenderViewports[eye].Pos.y = textureSize.h / 2 - idealSize.h / 2;
+		s_eyeRenderViewports[eye].Size = idealSize;
+		if ( !s_eyeTextures[eye]->TextureChain )
 		{
-			MessageBoxA( NULL, "Rift detected, display not enabled.", "", MB_OK );
-			return;
+			MessageBoxA( NULL, "Failed to create eye texture.", "", MB_OK );
+			return false;
 		}
 	}
+
+	// Create a mirror to see on the monitor.
+	ovrMirrorTextureDesc mirrorDesc = {};
+	mirrorDesc.Format = OVR_FORMAT_R8G8B8A8_UNORM_SRGB;
+	mirrorDesc.Width = DIRECTX.WinSizeW;
+	mirrorDesc.Height = DIRECTX.WinSizeH;
+	result = ovr_CreateMirrorTextureDX( s_session, DIRECTX.Device, &mirrorDesc, &s_mirrorTexture );
+	if ( OVR_FAILURE( result ) )
+	{
+		MessageBoxA( NULL, "Failed to create mirror texture.", "", MB_OK );
+		return false;
+	}
+
+	s_vbEyeTexture = new Texture( pcejin.width, pcejin.height, false );
+	s_immersiveScene.Add( new Model( new Material( s_vbEyeTexture, Material::MAT_TRANS | Material::MAT_POINT_FILTER ), -0.5f, -0.5f, 0.5f, 0.5f ) );
+	s_scene.Add( new Model( new Material( s_vbEyeTexture, Material::MAT_TRANS ), -0.5f, -0.5f, 0.5f, 0.5f ) );
+
+	ovr_SetTrackingOriginType( s_session, ovrTrackingOrigin_EyeLevel );
 }
 
 bool D3DInit()
 {
-	SetupOculus( MDFN_IEN_VB::GetSplitMode() == MDFN_IEN_VB::VB3DMODE_OVR );
-	bool UseAppWindowFrame = ( HMD->HmdCaps & ovrHmdCap_ExtendDesktop ) ? false : true;
-	RendererParams rendererParams;
-	rendererParams.Resolution = HMD->Resolution;
-	rendererParams.Multisample = 1;
-	rendererParams.Fullscreen = true;
-	pRender = RenderDevice::CreateDevice( rendererParams, (void*)g_hWnd );
-	ovrHmd_AttachToWindow( HMD, g_hWnd, NULL, NULL );
+	DIRECTX.SetWindow( g_hWnd );
 
-	vbEyeTexture = pRender->CreateTexture( Texture_RGBA | 1, pcejin.width, pcejin.height, NULL );
-	vbShaderFill = pRender->CreateTextureFill( vbEyeTexture );
-
-	Sizei recommenedTex0Size = ovrHmd_GetFovTextureSize( HMD, ovrEye_Left, HMD->DefaultEyeFov[0], 1.0f );
-	Sizei recommenedTex1Size = ovrHmd_GetFovTextureSize( HMD, ovrEye_Right, HMD->DefaultEyeFov[1], 1.0f );
-	Sizei RenderTargetSize;
-	RenderTargetSize.w = recommenedTex0Size.w + recommenedTex1Size.w;
-	RenderTargetSize.h = max( recommenedTex0Size.h, recommenedTex1Size.h );
-	pRenderTargetTexture = pRender->CreateTexture( Texture_RGBA | Texture_RenderTarget |
-		1,
-		RenderTargetSize.w, RenderTargetSize.h, NULL );
-	RenderTargetSize.w = pRenderTargetTexture->GetWidth();
-	RenderTargetSize.h = pRenderTargetTexture->GetHeight();
-
-	ovrFovPort eyeFov[2] = { HMD->DefaultEyeFov[0], HMD->DefaultEyeFov[1] };
-	EyeRenderViewport[0].Pos = Vector2i( 0, 0 );
-	EyeRenderViewport[0].Size = Sizei( RenderTargetSize.w / 2, RenderTargetSize.h );
-	EyeRenderViewport[1].Pos = Vector2i( ( RenderTargetSize.w + 1 ) / 2, 0 );
-	EyeRenderViewport[1].Size = EyeRenderViewport[0].Size;
-
-	EyeTexture[0].D3D11.Header.API = ovrRenderAPI_D3D11;
-	EyeTexture[0].D3D11.Header.TextureSize = RenderTargetSize;
-	EyeTexture[0].D3D11.Header.RenderViewport = EyeRenderViewport[0];
-	EyeTexture[0].D3D11.pTexture = pRenderTargetTexture->Tex.GetPtr();
-	EyeTexture[0].D3D11.pSRView = pRenderTargetTexture->TexSv.GetPtr();	
-
-	// Right eye uses the same texture, but different rendering viewport.
-	EyeTexture[1] = EyeTexture[0];
-	EyeTexture[1].D3D11.Header.RenderViewport = EyeRenderViewport[1];
-
-	ovrD3D11Config d3d11cfg;
-	d3d11cfg.D3D11.Header.API = ovrRenderAPI_D3D11;
-	d3d11cfg.D3D11.Header.RTSize = Sizei( HMD->Resolution.w, HMD->Resolution.h );
-	d3d11cfg.D3D11.Header.Multisample = 1;
-	d3d11cfg.D3D11.pDevice = pRender->Device;
-	d3d11cfg.D3D11.pDeviceContext = pRender->Context;
-	d3d11cfg.D3D11.pBackBufferRT = pRender->BackBufferRT;
-	d3d11cfg.D3D11.pSwapChain = pRender->SwapChain;	
-
-	ovrHmd_SetEnabledCaps( HMD, ovrHmdCap_LowPersistence | ovrHmdCap_DynamicPrediction );
-
-	if ( !ovrHmd_ConfigureRendering( HMD, &d3d11cfg.Config,
-		ovrDistortionCap_Chromatic | ovrDistortionCap_Vignette |
-		/*ovrDistortionCap_TimeWarp |*/ ovrDistortionCap_Overdrive,
-		eyeFov, EyeRenderDesc ) )
+	if ( !SetupOculus() )
 	{
-		MessageBoxA( NULL, "ovrHmd_ConfigureRendering failed", "", MB_OK );
 		return false;
 	}
-
-	ovrHmd_ConfigureTracking( HMD, ovrTrackingCap_Orientation |
-		ovrTrackingCap_MagYawCorrection |
-		ovrTrackingCap_Position, 0 );
-
-	QuadVertexBuffer = pRender->CreateBuffer();
-	const Vertex QuadVertices[] =
-	{ Vertex( Vector3f( -0.5, 0.5, 0 ), Color( 255, 255, 255, 255 ), 0.0f, 0.0f ), Vertex( Vector3f( 0.5, 0.5, 0 ), Color( 255, 255, 255, 255 ), 1.0f, 0.0f ),
-	Vertex( Vector3f( -0.5, -0.5, 0 ), Color( 255, 255, 255, 255 ), 0.0f, 1.0f ), Vertex( Vector3f( 0.5, -0.5, 0 ), Color( 255, 255, 255, 255 ), 1.0f, 1.0f ) };
-	QuadVertexBuffer->Data( Buffer_Vertex, QuadVertices, sizeof( QuadVertices ) );
 
 	return true;
 }
 
 static void UpdateTexture( ovrEyeType eye )
 {
-	pRender->Context->UpdateSubresource( vbEyeTexture->Tex, 0, NULL, convert_buffer, vbEyeTexture->Width * 4, vbEyeTexture->Width * vbEyeTexture->Height * 4 );
+	DIRECTX.Context->UpdateSubresource( s_vbEyeTexture->Tex, 0, NULL, convert_buffer, s_vbEyeTexture->SizeW * 4, s_vbEyeTexture->SizeW * s_vbEyeTexture->SizeH * 4 );
 }
 
 void render( ovrEyeType eye )
@@ -179,8 +230,6 @@ void render( ovrEyeType eye )
 
 void render()
 {
-	ovrPosef eyeRenderPose[2];
-
 	if( !pcejin.romLoaded || espec.skip )
 	{
 		return;
@@ -198,51 +247,125 @@ void render()
 
 	SetInputDisplayCharacters(pcejin.pads);
 
-	if ( MDFN_IEN_VB::GetSplitMode() == MDFN_IEN_VB::VB3DMODE_OVR )
+	// Call ovr_GetRenderDesc each frame to get the ovrEyeRenderDesc, as the returned values (e.g. HmdToEyeOffset) may change at runtime.
+	ovrEyeRenderDesc eyeRenderDescs[2];
+	eyeRenderDescs[0] = ovr_GetRenderDesc( s_session, ovrEye_Left, s_hmdDesc.DefaultEyeFov[0] );
+	eyeRenderDescs[1] = ovr_GetRenderDesc( s_session, ovrEye_Right, s_hmdDesc.DefaultEyeFov[1] );
+
+	// Get both eye poses simultaneously, with IPD offset already included. 
+	ovrPosef eyeRenderPoses[2];
+	ovrVector3f hmdToEyeOffsets[2] = { eyeRenderDescs[0].HmdToEyeOffset, eyeRenderDescs[1].HmdToEyeOffset };
+
+	double sensorSampleTime; // sensorSampleTime is fed into the layer later
+	ovr_GetEyePoses( s_session, s_frameIndex, ovrTrue, hmdToEyeOffsets, eyeRenderPoses, &sensorSampleTime );
+
+	bool immersiveMode = MDFN_IEN_VB::GetSplitMode() == MDFN_IEN_VB::VB3DMODE_OVR_IMMERSIVE;
+	for ( int eye = 0 ; eye < 2 ; ++eye )
 	{
-		ovrHmd_BeginFrame( HMD, 0 );
-		pRender->BeginScene();
-		ovrHmd_GetTrackingState( HMD, 0 );
-		for ( int eyeIndex = 0; eyeIndex < ovrEye_Count; eyeIndex++ )
+		// Clear and set up rendertarget
+#ifdef _DEBUG
+		DIRECTX.SetAndClearRenderTarget( s_eyeTextures[eye]->GetRTV(), s_eyeDepthBuffers[eye], 0.0f, 1.0f );
+#else // #ifdef _DEBUG
+		DIRECTX.SetAndClearRenderTarget( s_eyeTextures[eye]->GetRTV(), s_eyeDepthBuffers[eye] );
+#endif // #else // #ifdef _DEBUG
+		DIRECTX.SetViewport( (float)s_eyeRenderViewports[eye].Pos.x, (float)s_eyeRenderViewports[eye].Pos.y,
+								(float)s_eyeRenderViewports[eye].Size.w, (float)s_eyeRenderViewports[eye].Size.h );
+
+		// Copy virtual boy frame from CPU to GPU
+		render( eyeRenderDescs[eye].Eye );
+
+		if ( immersiveMode )
 		{
-			ovrEyeType eye = HMD->EyeRenderOrder[eyeIndex];
-			render( eye );
-			pRender->SetRenderTarget( pRenderTargetTexture );
-			pRender->SetViewport( Recti( EyeRenderViewport[eye] ) );
-			pRender->Clear();
-			pRender->SetProjection( Matrix4f() );
-			pRender->SetDepthMode( false, false );
-			float aspectRatio = (float)pcejin.width / pcejin.height / ( (float)EyeRenderViewport[eye].Size.w / EyeRenderViewport[eye].Size.h );
-			Matrix4f view = Matrix4f( 1, 0, 0, 0,
-				0, 1 / aspectRatio, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1 );
-			pRender->Render( vbShaderFill, QuadVertexBuffer, NULL, sizeof( Vertex ), view, 0, 4, Prim_TriangleStrip );
+			//Get the pose information in XM format
+			XMVECTOR eyeQuat = XMVectorSet( eyeRenderPoses[eye].Orientation.x, eyeRenderPoses[eye].Orientation.y,
+											eyeRenderPoses[eye].Orientation.z, eyeRenderPoses[eye].Orientation.w );
+			XMVECTOR eyePos = XMVectorSet( eyeRenderPoses[eye].Position.x, eyeRenderPoses[eye].Position.y, eyeRenderPoses[eye].Position.z, 0 );
+			Camera finalCam( &eyePos, &eyeQuat );
+			XMMATRIX view = finalCam.GetViewMatrix();
+
+			ovrMatrix4f p = ovrMatrix4f_Projection( eyeRenderDescs[eye].Fov, 0.01f, 10000.0f, ovrProjection_None );
+			XMMATRIX proj = XMMatrixSet( p.M[0][0], p.M[1][0], p.M[2][0], p.M[3][0],
+										 p.M[0][1], p.M[1][1], p.M[2][1], p.M[3][1],
+										 p.M[0][2], p.M[1][2], p.M[2][2], p.M[3][2],
+										 p.M[0][3], p.M[1][3], p.M[2][3], p.M[3][3] );
+			XMMATRIX viewProj = XMMatrixMultiply( view, proj );
+			float scaleFactor = 0.5f;
+			float aspectRatio = (float)pcejin.width / pcejin.height;
+			XMMATRIX worldMat = XMMatrixSet( scaleFactor * aspectRatio, 0.0f, 0.0f, 0.0f,
+											 0.0f, scaleFactor, 0.0f, 0.0f,
+											 0.0f, 0.0f, scaleFactor, 0.0f,
+											 0.0f, 0.0f, -0.5f, 1.0f );
+			XMMATRIX worldViewProj = XMMatrixMultiply( worldMat, viewProj );
+			s_immersiveScene.Render( &worldViewProj, 1.0f, 1.0f, 1.0f, 1.0f, true );
 		}
-		pRender->FinishScene();		
-		ovrHmd_EndFrame( HMD, eyeRenderPose, &EyeTexture[0].Texture );
+		else
+		{
+			float scaleFactor = 1.0f;
+			float aspectRatio = (float)pcejin.width / pcejin.height / ( (float)s_eyeRenderViewports[eye].Size.w / s_eyeRenderViewports[eye].Size.h );
+			XMMATRIX projMat = XMMatrixSet( scaleFactor, 0, 0, 0,
+											0, scaleFactor / aspectRatio, 0, 0,
+											0, 0, scaleFactor, 0,
+											0, 0, 0, 1 );
+			float ipdX = eyeRenderDescs[eye].HmdToEyeOffset.x * 5.0f;
+			float ipdY = eyeRenderDescs[eye].HmdToEyeOffset.y * 5.0f;
+			XMMATRIX projWithIPDMat = XMMatrixMultiply( projMat, XMMatrixTranslation( -ipdX, -ipdY, 0.0f ) );
+			s_scene.Render( &projWithIPDMat, 1.0f, 1.0f, 1.0f, 1.0f, true );
+		}
+
+		// Commit rendering to the swap chain
+		s_eyeTextures[eye]->Commit();
+	}
+
+	// Initialize our single full screen Fov layer.
+	ovrLayerEyeFov ld = {};
+	if ( immersiveMode )
+	{
+		ld.Header.Type = ovrLayerType_EyeFov;
+		ld.Header.Flags = ovrLayerFlag_HighQuality;
+
+		for ( int eye = 0 ; eye < 2 ; ++eye )
+		{
+			ld.ColorTexture[eye] = s_eyeTextures[eye]->TextureChain;
+			ld.Viewport[eye] = s_eyeRenderViewports[eye];
+			ld.Fov[eye] = s_hmdDesc.DefaultEyeFov[eye];
+			ld.RenderPose[eye] = eyeRenderPoses[eye];
+			ld.SensorSampleTime = sensorSampleTime;
+		}
 	}
 	else
 	{
-		render( ovrEye_Right );
-		pRender->SetDefaultRenderTarget();
-		pRender->SetFullViewport();
-		pRender->Clear();
-		pRender->SetProjection( Matrix4f() );
-		pRender->SetDepthMode( false, false );
-		float aspectRatio = (float)pcejin.width / pcejin.height / ( (float)pRender->D3DViewport.Width / pRender->D3DViewport.Height );
-		Matrix4f view = Matrix4f( 2, 0, 0, 0,
-			0, 2 / aspectRatio, 0, 0,
-			0, 0, 2, 0,
-			0, 0, 0, 1 );
-		pRender->Render( vbShaderFill, QuadVertexBuffer, NULL, sizeof( Vertex ), view, 0, 4, Prim_TriangleStrip );
-		pRender->Present( true );
-	}
-}
+		ld.Header.Type = ovrLayerType_EyeFov;
+		ld.Header.Flags = ovrLayerFlag_HeadLocked | ovrLayerFlag_HighQuality;
 
-void DismissHSWDisplay()
-{
-	ovrHmd_DismissHSWDisplay( HMD );
+		for ( int eye = 0 ; eye < 2 ; ++eye )
+		{
+			ld.ColorTexture[eye] = s_eyeTextures[eye]->TextureChain;
+			ld.Viewport[eye] = s_eyeRenderViewports[eye];
+			ld.Fov[eye] = s_hmdDesc.DefaultEyeFov[eye];
+			ld.RenderPose[eye] = ovrPosef { ovrQuatf { 0.0f, 0.0f, 0.0f, 1.0f }, ovrVector3f { 0.0f, 0.0f, 0.0f } };
+			ld.SensorSampleTime = sensorSampleTime;
+		}
+	}
+
+	ovrLayerHeader* layers = &ld.Header;
+	ovrResult frameResult = ovr_SubmitFrame( s_session, s_frameIndex, nullptr, &layers, 1 );
+	assert( OVR_SUCCESS( frameResult ) );
+
+	ovrSessionStatus sessionStatus;
+	ovr_GetSessionStatus( s_session, &sessionStatus );
+	if ( sessionStatus.ShouldRecenter )
+	{
+		ovr_RecenterTrackingOrigin( s_session );
+	}
+
+	// Render mirror
+	ID3D11Texture2D* tex = NULL;
+	ovr_GetMirrorTextureBufferDX( s_session, s_mirrorTexture, IID_PPV_ARGS( &tex ) );
+	DIRECTX.Context->CopyResource( DIRECTX.BackBuffer, tex );
+	tex->Release();
+	DIRECTX.SwapChain->Present( 0, 0 );
+
+	s_frameIndex++;
 }
 
 #endif // #if USE_D3D

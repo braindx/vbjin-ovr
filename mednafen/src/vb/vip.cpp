@@ -236,6 +236,7 @@ static void Recalc3DModeStuff(bool non_rgb_output = false)
            break;
 
   case VB3DMODE_OVR:
+  case VB3DMODE_OVR_IMMERSIVE:
 	       CopyFBColumnToTarget = CopyFBColumnToTarget_OVR;
 	       break;
  }
